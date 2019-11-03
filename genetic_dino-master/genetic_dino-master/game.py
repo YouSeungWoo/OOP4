@@ -13,7 +13,7 @@ class Game():
   def __init__(self):
     pygame.init()
 
-    self.generation = Generation()
+    self.generation = Generation() # test
 
     self.population = self.generation.population
 
