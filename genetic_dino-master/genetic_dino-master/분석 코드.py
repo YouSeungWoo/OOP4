@@ -13,15 +13,16 @@ class Game():
   def __init__(self):
     pygame.init()
 
-    self.generation = Generation() # test
+    self.generation = Generation()      # 유전정보 생성(유전 수, 개체 수, 최고 개체 수, ??lucky_few??, 돌연변이 확률 설정)
+                                        # generation이라는 객체 생성, Generation()의 __init__()에서 초기화
 
-    self.population = self.generation.population
+    self.population = self.generation.population     # 변수 population 생성 후 객체 generation의 개체 수 정보를 받아옴
 
-    self.gamespeed = 4
-    self.max_gamespeed = 10
-    self.high_score = 0
-    self.n_gen = 0
-    self.current_gen_score = 0
+    self.gamespeed = 4             # 속도
+    self.max_gamespeed = 10        # 최고 속도
+    self.high_score = 0            # 최고 점수
+    self.n_gen = 0                 # 세대 수
+    self.current_gen_score = 0     # 현재 세대 점수
 
     self.dinos = None
     self.genomes = []
