@@ -2,16 +2,16 @@ import os
 import sys
 import pygame
 import random
-from objects import *
-from helpers import *
-from generation import Generation
+from objects import *                 # objects.py의 모든 내용 추가 
+from helpers import *                 # helpers.py의 모든 내용 추가
+from generation import Generation     # geteration.py의 Generation 클래스 추가
 import numpy as np
 import copy
 import matplotlib.pyplot as plt
 
 class Game():
   def __init__(self):
-    pygame.init()
+    pygame.init()                       # pygame 초기화
 
     self.generation = Generation()      # 유전정보 생성(유전 수, 개체 수, 최고 개체 수, ??lucky_few??, 돌연변이 확률 설정)
                                         # generation이라는 객체 생성, Generation()의 __init__()에서 초기화
@@ -24,31 +24,33 @@ class Game():
     self.n_gen = 0                 # 세대 수
     self.current_gen_score = 0     # 현재 세대 점수
 
-    self.dinos = None
-    self.genomes = []
+    self.dinos = None              # 변수 dino 생성
+    self.genomes = []              # 배열 genomes 생성
 
-    self.screen = pygame.display.set_mode(scr_size)
-    self.clock = pygame.time.Clock()
-    pygame.display.set_caption('Genetic T-Rex Rush')
+    self.screen = pygame.display.set_mode(scr_size)       # helpers.py의 변수 scr_size 값을 이용해 게임 해상도 설정
+    self.clock = pygame.time.Clock()                      # 초당 프레임 출력 설정을 위해 clock 변수 설정
+    pygame.display.set_caption('Genetic T-Rex Rush')      # 게임 제목 설정
 
-    self.jump_sound = pygame.mixer.Sound('sprites/jump.wav')
-    self.die_sound = pygame.mixer.Sound('sprites/die.wav')
-    self.checkPoint_sound = pygame.mixer.Sound('sprites/checkPoint.wav')
-
+    self.jump_sound = pygame.mixer.Sound('sprites/jump.wav')                # 점프 소리 설정
+    self.die_sound = pygame.mixer.Sound('sprites/die.wav')                  # 죽을 때 소리 설정
+    self.checkPoint_sound = pygame.mixer.Sound('sprites/checkPoint.wav')    # 체크포인트 소리 설정
+    
+    # 데이터를 차트로 표시하기 위한 구문
     self.scores = []
     self.fig = plt.figure(figsize=(int(width/100), 5))
     self.ax = plt.axes()
     plt.xlabel('Generation', fontsize=18)
     plt.ylabel('Score', fontsize=16)
     plt.show(block=False)
+    # Game class 끝
 
   def introscreen(self):
-    Dino.containers = []
-    temp_dino = Dino(44, 47, self.screen)
-    temp_dino.isBlinking = True
-    gameStart = False
+    Dino.containers = []                                # ??
+    temp_dino = Dino(44, 47, self.screen)               # temp_dino 객체 생성
+    temp_dino.isBlinking = True                         # isBlinking을 True로 변경
+    gameStart = False                                   # gameStart를 False로 변경
 
-    callout,callout_rect = load_image('call_out2.png',196,62,-1)
+    callout,callout_rect = load_image('call_out2.png',196,62,-1)      # load_image 반환 값 2개를 각각 저장
     callout_rect.left = width*0.05
     callout_rect.top = height*0.3
 
