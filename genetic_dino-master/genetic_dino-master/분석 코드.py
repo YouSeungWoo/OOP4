@@ -42,7 +42,7 @@ class Game():
     plt.xlabel('Generation', fontsize=18)
     plt.ylabel('Score', fontsize=16)
     plt.show(block=False)
-    # Game class 끝
+    # 함수 
 
   def introscreen(self):
     Dino.containers = []                                # ??
