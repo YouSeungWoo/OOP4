@@ -104,14 +104,14 @@ class Game():
     self.gamespeed = 4
     self.current_gen_score = 0
 
-    # load sprites
+    # load sprites # 객체 생성
     self.new_ground = Ground(-self.gamespeed, self.screen)
     self.scb = Scoreboard(screen=self.screen)
     self.highsc = Scoreboard(width - 180, screen=self.screen)
     self.sursc = Scoreboard(width - 300, screen=self.screen)
     self.gensc = Scoreboard(width - 400, screen=self.screen)
 
-    basicfont = pygame.font.SysFont('Menlo', 15)
+    basicfont = pygame.font.SysFont('Menlo', 15)      # 여기서부터 폰트 설정
     self.gen_text = basicfont.render('GEN', True, (0, 0, 0), background_col)
     self.textrect = self.gen_text.get_rect()
     self.textrect.top = height * 0.095
@@ -132,9 +132,9 @@ class Game():
     self.gen_image.fill(background_col)
     self.gen_image.blit(temp_gen_image[0], self.gen_rect)
     self.gen_rect.top = height*0.08
-    self.gen_rect.left = width - 320
+    self.gen_rect.left = width - 320 # 여기까지
 
-    self.dinos = pygame.sprite.Group()
+    self.dinos = pygame.sprite.Group()    # 여기서부터 객체를 그룹으로 세팅
     Dino.containers = self.dinos
     for i in range(self.population):
       self.dinos.add(Dino(44,47, self.screen))
@@ -149,7 +149,7 @@ class Game():
 
     Cactus.containers = self.cacti
     Ptera.containers = self.pteras
-    Cloud.containers = self.clouds
+    Cloud.containers = self.clouds      # 여기까지
 
   def update(self):
     # move self.cacti
