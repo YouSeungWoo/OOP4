@@ -97,9 +97,9 @@ class Game():
 
       self.clock.tick(FPS)                          # 화면 전환 설정
       if temp_dino.isJumping == False and temp_dino.isBlinking == False:
-        gameStart = True
+        gameStart = True  # 게임 시작 True
 
-  def prepare(self):
+  def prepare(self): 
     self.counter = 0
     self.gamespeed = 4
     self.current_gen_score = 0
@@ -154,29 +154,29 @@ class Game():
   def update(self):
     # move self.cacti
     for c in self.cacti:
-      c.movement[0] = -self.gamespeed
+      c.movement[0] = -self.gamespeed # movement (xspeed, yspeed)
       for d in self.dinos:
-        if pygame.sprite.collide_mask(d, c):
-          d.isDead = True
+        if pygame.sprite.collide_mask(d, c): # mask(히트박스) 가 선인장과 디노가 겹치면
+          d.isDead = True # 죽음
 
     # move self.pteras
-    for p in self.pteras:
+    for p in self.pteras: # 마찬가지
       p.movement[0] = -self.gamespeed
       for d in self.dinos:
         if pygame.sprite.collide_mask(d, p):
           d.isDead = True
 
     # add more self.cacti
-    if len(self.all_obstacles) == 0:
-      new_object = Ptera(self.gamespeed, 46, 40, self.screen)
+    if len(self.all_obstacles) == 0: # 장애물 없을 때
+      new_object = Ptera(self.gamespeed, 46, 40, self.screen) # 46 x 40 크기의 Ptera 생성
 
-      self.all_obstacles.add(new_object)
-      self.last_obstacle.empty()
-      self.last_obstacle.add(new_object)
-    elif len(self.all_obstacles) < 3:
+      self.all_obstacles.add(new_object) # 추가
+      self.last_obstacle.empty() # 비우기
+      self.last_obstacle.add(new_object) # 추가
+    elif len(self.all_obstacles) < 3: # 2개밖에 없다면
       for l in self.last_obstacle:
-        if l.rect.right < width * 0.7:
-          r = random.randrange(0, 100)
+        if l.rect.right < width * 0.7: # 만든지 얼마 안 된 장애물이 아닐 경우
+          r = random.randrange(0, 100) # 확률, 선인장과 까마귀 랜덤생성
           if r < 40:
             new_object = Cactus(self.gamespeed,40, 40, self.screen)
           elif r >= 40:
@@ -205,7 +205,7 @@ class Game():
 
     # draw background
     if pygame.display.get_surface() != None:
-      self.screen.fill(background_col)
+      self.screen.fill(background_col) # bgcolor 로 배경 채우기
       self.new_ground.draw()
       self.clouds.draw(self.screen)
       self.scb.draw()
@@ -219,7 +219,7 @@ class Game():
       self.pteras.draw(self.screen)
       self.dinos.draw(self.screen)
 
-      pygame.display.update()
+      pygame.display.update() # 업데이트
 
     self.clock.tick(FPS)
 
@@ -233,7 +233,7 @@ class Game():
   def gameplay(self):
     game_over = False
 
-    self.prepare()
+    self.prepare() # 준비
 
     print('===== %sth Generation =====' % self.n_gen)
 
