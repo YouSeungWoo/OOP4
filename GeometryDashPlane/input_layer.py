@@ -1,6 +1,6 @@
 import pygame
 
-from network import Network     # geteration.py의 Generation 클래스 추가
+from network import Network     # network 클래스
 
 class input_layer:
     self.usermode = True # usermode
@@ -8,6 +8,9 @@ class input_layer:
     def __init__(self, usmode = True):
         self.usermode = usmode
         self.ai = None
+    
+    def set_ai(ai):
+        self.ai = ai
     
     def get_input():
         if self.usermode == True:
