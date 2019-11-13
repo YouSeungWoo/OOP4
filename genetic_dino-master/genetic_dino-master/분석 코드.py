@@ -49,10 +49,11 @@ class Game():
     temp_dino = Dino(44, 47, self.screen)               # temp_dino 객체 생성
     temp_dino.isBlinking = True                         # isBlinking을 True로 변경
     gameStart = False                                   # gameStart를 False로 변경
-
+    
+    # 여기서부터는 각 오브젝트의 이미지를 불러와서 저장하고 사각형 범위 설정
     callout,callout_rect = load_image('call_out2.png',196,62,-1)      # load_image 반환 값 2개를 각각 저장
-    callout_rect.left = width*0.05
-    callout_rect.top = height*0.3
+    callout_rect.left = width*0.05        # image 왼쪽의 기준은 너비 * 0.05 (screen에 보이는 image의 위치)
+    callout_rect.top = height*0.3         # image 위쪽의 기준은 높이 * 0.3 
 
     temp_ground,temp_ground_rect = load_sprite_sheet('ground.png',15,1,-1,-1,-1)
     temp_ground_rect.left = width/20
@@ -64,31 +65,32 @@ class Game():
     logo2,logo2_rect = load_image('genetic_icon.png',80,80,-1)
     logo2 = logo2.convert_alpha()
     logo2_rect.centerx = width*0.45
-    logo2_rect.centery = height*0.45
+    logo2_rect.centery = height*0.45        # 여기까지
 
     while not gameStart:
-      if pygame.display.get_surface() == None:
+      if pygame.display.get_surface() == None:        # 게임 실행 정보 창 호출 실패 시 게임 종료
         print("Couldn't load display surface")
         return True
       else:
         for event in pygame.event.get():
-          if event.type == pygame.QUIT:
+          if event.type == pygame.QUIT:               # 종료 이벤트 발생 시 종료
             return True
-          if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
-              temp_dino.isJumping = True
-              temp_dino.isBlinking = False
-              temp_dino.movement[1] = -temp_dino.jumpSpeed
+          if event.type == pygame.KEYDOWN:            # 키보드 누를 때
+            if event.key == pygame.K_SPACE or event.key == pygame.K_UP: # 스페이스바 또는 위쪽 방향키 눌렀을 때
+              temp_dino.isJumping = True              # 공룡은 점프
+              temp_dino.isBlinking = False            # ?? 어떤 상태일까
+              temp_dino.movement[1] = -temp_dino.jumpSpeed    # ??
 
-      temp_dino.update()
-
-      if pygame.display.get_surface() != None:
-        self.screen.fill(background_col)
-        self.screen.blit(temp_ground[0],temp_ground_rect)
+      temp_dino.update()        # 공룡 상태 업데이트
+      
+      # 여기서부터 게임 시작 화면 출력
+      if pygame.display.get_surface() != None:            # 게임 실행 창 불러왔으면
+        self.screen.fill(background_col)                  # 화면 색 채우기
+        self.screen.blit(temp_ground[0],temp_ground_rect) # temp_ground[0]의 객체를 좌표(rect)에 맞게 screen 위에 복사
         if temp_dino.isBlinking:
           self.screen.blit(logo2,logo2_rect)
           self.screen.blit(logo,logo_rect)
-          self.screen.blit(callout,callout_rect)
+          self.screen.blit(callout,callout_rect)    # 여기까지
         temp_dino.draw()
 
         pygame.display.update()
@@ -322,9 +324,9 @@ class Game():
     exit()
 
   def start(self):
-    isGameQuit = self.introscreen()
+    isGameQuit = self.introscreen()     # introscreen함수에서 게임 종료 여부 판단
     if not isGameQuit:
-      self.gameplay()
+      self.gameplay()                   # 게임 종료상태가 아니면 게임 진행
 
-g = Game()
-g.start()
+g = Game()            # 객체 g 설정
+g.start()             # 게임 시작
