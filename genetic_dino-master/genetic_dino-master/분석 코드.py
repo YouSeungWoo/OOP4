@@ -97,9 +97,9 @@ class Game():
 
       self.clock.tick(FPS)                          # 화면 전환 설정
       if temp_dino.isJumping == False and temp_dino.isBlinking == False:
-        gameStart = True
+        gameStart = True  # 게임 시작 True
 
-  def prepare(self):
+  def prepare(self): 
     self.counter = 0
     self.gamespeed = 4
     self.current_gen_score = 0
