@@ -9,10 +9,10 @@ class input_layer:
         self.usermode = usmode
         self.ai = None
     
-    def set_ai(ai):
+    def set_ai(self, ai):
         self.ai = ai
     
-    def get_input():
+    def get_input(self):
         if self.usermode == True:
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
