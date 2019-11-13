@@ -29,7 +29,7 @@ class Network:
     def relu(self, z):
         return z * (z > 0)
 
-    def get_decision():
+    def get_decision(self):
         output = self.forward()
         if output < 0: return False
         else return True
