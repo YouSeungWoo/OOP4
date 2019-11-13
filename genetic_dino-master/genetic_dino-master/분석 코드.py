@@ -91,11 +91,11 @@ class Game():
           self.screen.blit(logo2,logo2_rect)
           self.screen.blit(logo,logo_rect)
           self.screen.blit(callout,callout_rect)    # 여기까지
-        temp_dino.draw()
+        temp_dino.draw()                            # 공룡 그려주는 함수(object.h)
 
-        pygame.display.update()
+        pygame.display.update()                     # 화면 업데이트
 
-      self.clock.tick(FPS)
+      self.clock.tick(FPS)                          # 화면 전환 설정
       if temp_dino.isJumping == False and temp_dino.isBlinking == False:
         gameStart = True
 
