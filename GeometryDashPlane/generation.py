@@ -71,6 +71,6 @@ class Generation():
 
     def mutate(self, genome):
         new_genome = copy.deepcopy(genome)
-        for k in range(len(new_genome.W))
+        for k in range(len(new_genome.W)):
             new_genome.W[k] += self.mutate_weights(new_genome.W[k])
         return new_genome
