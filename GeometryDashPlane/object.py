@@ -1,57 +1,92 @@
-# -*- coding: cp949 -*-
-# °ÔÀÓ¿¡ »ç¿ëµÇ´Â °´Ã¼¸¦ °ü¸®ÇÏ´Â ÆÄÀÏ
+# ê²Œì„ì— ì‚¬ìš©ë˜ëŠ” ê°ì²´ë¥¼ ê´€ë¦¬í•˜ëŠ” íŒŒì¼
 
-import os, sys, pygame, random, math
+import os, sys, pygame, random
 from manage import *
 from pygame.locals import K_SPACE, Rect
 import numpy as np
-from collision import *
+import math
 
 class Geo(pygame.sprite.Sprite):
     def __init__(self, size_x = -1, size_y = -1, screen = None):
         pygame.sprite.Sprite.__init__(self)
         
-        self.geo_image, self.geo_image_rect  = load_image(FileName.geo.value, size_x, size_y, None) # ÀÌ¹ÌÁö ·Îµå
-        self.image = self.geo_image
-        self.rect = self.image.get_rect()
-        self.rect.center = (width * 0.3, height * 0.7)
-        self.screen = screen
-
+        self.geo_image, self.rect  = load_image(FileName.geo.value, size_x, size_y, None) # ì´ë¯¸ì§€ ë¡œë“œ
+        self.image= self.geo_image
+        self.x,self.y = self.rect.topleft
         self.velocity = 0
         self.isUp = False
+        self.rect.move_ip(geo_pos,2*height/5) # ì²˜ìŒ ì¢Œí‘œ ì´ë™
     
-    def move(self, layer, gamespeed):
-        self.isUP = layer.get_key() # get keypress value
-
-        if self.velocity < gamespeed:
-            if self.isUP:
-                self.velocity -= gravity * (1 - math.atan(-self.velocity / gamespeed))
-            else:
-                self.velocity += gravity * (1 - math.atan(self.velocity / gamespeed))
-                
-        self.x, self.y = self.rect.center
-        self.rad = math.atan(-self.velocity / gamespeed)
-        self.image = pygame.transform.rotate(self.geo_image, math.degrees(self.rad))
+    def trans(self):
+        (self.x, self.y) = self.rect.center
+        self.image = pygame.transform.rotate(self.geo_image, math.degrees(math.atan(-self.velocity / x_speed)))
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
-        self.outline()
-
-        self.rect.move_ip(0, self.velocity) # geo_image_rect¸¦ ¿Å°Ü ÁÜ
-
-        return self.rect.topleft # geo_image_rectÀÇ ¿ŞÂÊ À§ÀÇ ÁÂÇ¥¸¦ ¹İÈ¯
-
-    def outline(self):
-        self.v = Vector
-        self.poly = Concave_Poly(self.v(width * 0.3, height * 0.7), [self.v(30, 0), self.v(0, 30), self.v(30, 50)])
-        self.poly.angle = -self.rad
-        self.poly.pos.x = self.x
-        self.poly.pos.y = self.y
-        self.poly.center = (self.x, self.y)
         
-        pygame.draw.polygon(self.screen, BLACK, self.poly.points, 3)
+    def move(self, key, gamespeed):
+        if key == K_SPACE: # ìŠ¤í˜ì´ìŠ¤ë°”ë¥¼ ëˆ„ë¥´ë©´ ì˜¬ë¼ê°€ê¸°
+            self.isUP = True
+        else:
+            self.isUP = False
+        
+
+        if self.velocity < x_speed:
+            if self.isUP:
+                self.velocity -= gravity * (1 - math.atan(-self.velocity / x_speed))
+            else:
+                self.velocity += gravity * (1 - math.atan(self.velocity / x_speed))
+        self.trans()
+        self.rect.move_ip(0,self.velocity) # geo_image_rectë¥¼ ì˜®ê²¨ ì¤Œ
+        
+        if self.rect.bottom >= height:
+            if not self.isUP or self.velocity > 0 :
+                self.velocity=0
+                self.trans()
+                bottom = self.rect.bottom
+                self.rect.move_ip(0, height - bottom)
+        elif self.rect.top <= 0 :
+            if self.isUP or self.velocity < 0:
+                self.velocity=0
+                self.trans()
+                top = self.rect.top
+                self.rect.move_ip(0, -top)
+        
+        return self.rect.topleft # geo_image_rectì˜ ì™¼ìª½ ìœ„ì˜ ì¢Œí‘œë¥¼ ë°˜í™˜
 
 
-class thorn(pygame.sprite.Sprite):
-    def __init__(self, size_x = -1, size_y = -1, screen = None):
-        pygame.sprite.Sprite.__init__(self)
-        self.thorn_image, self.thorn_image_rect = pygame.image.load(FileName.thorn)
+class Thorn(pygame.sprite.Sprite):
+    def __init__(self, size_x=-1, size_y=-1, screen=None, gamespeed = x_speed):
+        pygame.sprite.Sprite.__init__(self, self.containers)
+        self.thorn_image, self.rect = load_image(FileName.thorn.value, size_x, size_y, None) # ì´ë¯¸ì§€ ë¡œë“œ
+        self.image=self.thorn_image
+        self.x, self.y = self.rect.topleft
+        self.velocity = -gamespeed
+        self.rect.left = width
+        self.rect.bottom = 0.98*height
+    
+    def draw(self):
+        self.screen.blit(self.thorn_image,self.rect)
+        
+    def update(self):
+        self.rect.move_ip(self.velocity,0)
+        if self.rect.right<0:
+            self.kill()
+            return (-1, -1)
+        else:
+            return self.rect.topleft
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
