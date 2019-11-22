@@ -22,7 +22,8 @@ class input_layer:
                 elif event.type == pygame.KEYUP:
                     self.keypress = False # set keypress false
                     return False
-                elif event.type == QUIT:
+                elif event.type == pygame.QUIT:
+                    print("EXIT GAME")
                     pygame.quit()
                     sys.exit()
             return self.keypress
