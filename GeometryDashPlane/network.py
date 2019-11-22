@@ -32,4 +32,4 @@ class Network:
     def get_decision(self):
         output = self.forward()
         if output < 0: return False
-        else return True
+        else: return True
