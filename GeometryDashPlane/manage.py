@@ -1,6 +1,7 @@
 # 게임 전체에 이용되는 변수나 기타 게임 관리에 필요한 함수를 담당하는 파일
 
-import enum, os, pygame
+import enum, os, pygame, sys
+from collision import *
 
 FPS = 120
 scr_size = (width, height) = (1280, 600)
@@ -25,6 +26,13 @@ class FileSize(enum.Enum):
     start_txt = (498, 67)
     geo = (90, 58)
     background = (width, height)
+
+class Hitbox(enum.Enum):
+    v = Vector
+    geo = Concave_Poly(v(width * 0.3, height * 0.7), \
+            [v(-25, -17), v(-25, -15), v(-23, -13), v(-23, -12), v(-18, -7), v(-18, -5), v(-22, -5), v(-23, -4), v(-24, -4), v(-25, -3), \
+           v(-23, 1), v(-24, 2), v(-24, 5), v(-23, 6), v(-21, 6), v(-21, 8), v(-22, 9), v(-22, 10), v(-20, 12), \
+          v(0,0), v(0, 330), v(0, 0)])
 
 class BackgroundImage(enum.Enum):
     stage1 = None;
