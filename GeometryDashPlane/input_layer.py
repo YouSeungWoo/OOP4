@@ -3,8 +3,8 @@ import pygame
 from network import Network     # network 클래스
 
 class input_layer:
-    self.usermode = True # usermode
-    self.ai = None
+    usermode = True # usermode
+    ai = None
     def __init__(self, usmode = True):
         self.usermode = usmode
         self.ai = None
@@ -21,4 +21,3 @@ class input_layer:
         else:
             assert self.ai != None
             return self.ai.get_decision()
-    

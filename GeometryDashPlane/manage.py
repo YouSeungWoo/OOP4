@@ -3,8 +3,8 @@
 import enum, os, pygame
 
 FPS = 60
-scr_size = (width, height) = (900, 150)
-gravity = 0.6
+scr_size = (width, height) = (1280, 600)
+gravity = 0.1
 x_speed = 10
 
 BLACK = (0, 0, 0)
@@ -13,27 +13,34 @@ background_color = (255, 255, 255)
 geo_pos = width / 15
 
 class FileName(enum.Enum):
-    title = ('', 0, 0)
-    title_text = ('', 0, 0)
-    geo = ('', 0, 0)
-    background = ('', 0, 0)
+    sprites = 'image'               # 이미지 파일이 들어있는 폴더 경로
+    title = 'title.png'             # 이미지 파일 이름들
+    start_txt = 'key_text.png'
+    geo = 'character.png'
+    thorn = ''
+    background = 'background_main.png'
 
+class FileSize(enum.Enum):
+    title = (1155, 155)
+    start_txt = (498, 67)
+    geo = (90, 58)
+    background = (width, height)
 
 class BackgroundImage(enum.Enum):
     stage1 = None;
 
 
 def load_image(name, size_x = -1, size_y = -1, colorkey = None):
-    fullname = os.path.join('sprites', name)      # sprites와 name을 결합시켜 fullname에 저장
+    fullname = os.path.join('image', name)      # sprites와 name을 결합시켜 fullname에 저장
     image = pygame.image.load(fullname)           # fullname을 load해 image에 저장
-    
-    image = image.convert()                       # 그냥 해줘야 한다고 함
+
+    image.convert()                       # 그냥 해줘야 한다고 함
     if colorkey is not None:                      # colorkey: 투명하게 처리할 색
         if colorkey is -1:                          # colorkey = -1이면
             colorkey = image.get_at((0, 0))           # image의 (0, 0)에 있는 색을 가져와서
     image.set_colorkey(colorkey, pygame.RLEACCEL) # image의 해당 색을 전부 투명하게 처리
     
-    if sizex != -1 or sizey != -1:
-        image = pygame.transform.scale(image, (sizex, sizey))   # image size 변경
+    if size_x != -1 or size_y != -1:
+        image = pygame.transform.scale(image, (size_x, size_y))   # image size 변경
     
     return (image, image.get_rect())
