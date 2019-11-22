@@ -1,4 +1,5 @@
-# ê²Œì„ì— ì‚¬ìš©ë˜ëŠ” ê°ì²´ë¥¼ ê´€ë¦¬í•˜ëŠ” íŒŒì¼
+# -*- coding: cp949 -*-
+# °ÔÀÓ¿¡ »ç¿ëµÇ´Â °´Ã¼¸¦ °ü¸®ÇÏ´Â ÆÄÀÏ
 
 import os, sys, pygame, random, math
 from manage import *
@@ -10,7 +11,7 @@ class Geo(pygame.sprite.Sprite):
     def __init__(self, size_x = -1, size_y = -1, screen = None):
         pygame.sprite.Sprite.__init__(self)
         
-        self.geo_image, self.geo_image_rect  = load_image(FileName.geo.value, size_x, size_y, None) # ì´ë¯¸ì§€ ë¡œë“œ
+        self.geo_image, self.geo_image_rect  = load_image(FileName.geo.value, size_x, size_y, None) # ÀÌ¹ÌÁö ·Îµå
         self.image = self.geo_image
         self.rect = self.image.get_rect()
         self.rect.center = (width * 0.3, height * 0.7)
@@ -19,11 +20,8 @@ class Geo(pygame.sprite.Sprite):
         self.velocity = 0
         self.isUp = False
     
-    def move(self, key, gamespeed):
-        if key == K_SPACE: # ìŠ¤í˜ì´ìŠ¤ë°”ë¥¼ ëˆ„ë¥´ë©´ ì˜¬ë¼ê°€ê¸°
-            self.isUP = True
-        else:
-            self.isUP = False
+    def move(self, layer, gamespeed):
+        self.isUP = layer.get_key() # get keypress value
 
         if self.velocity < gamespeed:
             if self.isUP:
@@ -38,9 +36,9 @@ class Geo(pygame.sprite.Sprite):
         self.rect.center = (self.x, self.y)
         self.outline()
 
-        self.rect.move_ip(0, self.velocity) # geo_image_rectë¥¼ ì˜®ê²¨ ì¤Œ
+        self.rect.move_ip(0, self.velocity) # geo_image_rect¸¦ ¿Å°Ü ÁÜ
 
-        return self.rect.topleft # geo_image_rectì˜ ì™¼ìª½ ìœ„ì˜ ì¢Œí‘œë¥¼ ë°˜í™˜
+        return self.rect.topleft # geo_image_rectÀÇ ¿ŞÂÊ À§ÀÇ ÁÂÇ¥¸¦ ¹İÈ¯
 
     def outline(self):
         self.v = Vector

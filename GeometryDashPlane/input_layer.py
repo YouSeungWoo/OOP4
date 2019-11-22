@@ -1,6 +1,6 @@
-import pygame
+import pygame, sys
 
-from network import Network     # network ÌÅ¥ÎûòÏä§
+from network import Network     # network ≈¨∑°Ω∫
 
 class input_layer:
     usermode = True # usermode
@@ -16,13 +16,16 @@ class input_layer:
     def get_input(self):
         if self.usermode == True:
             for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                if event.type == pygame.KEYDOWN and event.key == K_SPACE:
                     self.keypress = True # set keypress true
                     return True
-                else if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
+                elif event.type == pygame.KEYUP:
                     self.keypress = False # set keypress false
                     return False
-            return keypress
+                elif event.type == QUIT
+                    pygame.quit()
+                    sys.exit()
+            return self.keypress
         else:
             assert self.ai != None
             self.keypress = Bool(self.ai.get_decision())

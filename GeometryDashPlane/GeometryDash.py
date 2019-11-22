@@ -1,4 +1,6 @@
-# ì‹¤ì œ ê²Œì„ì„ ì§„í–‰í•˜ëŠ” íŒŒì¼
+# -*- coding: cp949 -*-
+
+# ½ÇÁ¦ °ÔÀÓÀ» ÁøÇàÇÏ´Â ÆÄÀÏ
 
 import pygame
 from generation import Generation
@@ -6,49 +8,55 @@ from manage import *
 from object import Geo
 import numpy as np
 import random, copy, os, sys
-from pygame.locals import QUIT, Rect, KEYDOWN, KEYUP, K_SPACE, K_LEFT # ì…ë ¥ë°›ì„ í‚¤(spacebar), spacebarê°€ ì•„ë‹Œ ë‹¤ë¥¸ í‚¤(ì¼ë‹¨ ì„ì˜ë¡œ left keyë¡œ ì •í•¨)
+from input_layer import input_layer
+from pygame.locals import QUIT, Rect, KEYDOWN, KEYUP, K_SPACE, K_LEFT # ÀÔ·Â¹ŞÀ» Å°(spacebar), spacebar°¡ ¾Æ´Ñ ´Ù¸¥ Å°(ÀÏ´Ü ÀÓÀÇ·Î left key·Î Á¤ÇÔ)
 
 
 class Game():
     def __init__(self):
         pygame.init()
-        pygame.key.set_repeat(5,5) # ëˆ„ë¥´ê³  ìˆì„ ê²ƒì„ ëŒ€ë¹„
+        pygame.key.set_repeat(5,5) # ´©¸£°í ÀÖÀ» °ÍÀ» ´ëºñ
         
         self.high_score = 0
         self.n_gen = 0
         self.current_score = 0
 
-    
-
+        
         self.gamespeed = x_speed
         self.screen = pygame.display.set_mode(scr_size)
         self.clock = pygame.time.Clock()
         pygame.display.set_caption('Geometry Dash: Plain')
-        self.geo = Geo(FileSize.geo.value[0], FileSize.geo.value[1], self.screen) # geo ìƒì„±
-        # ìœ ì „ì •ë³´ ìƒì„±í•˜ê¸°
+        self.geo = [Geo(FileSize.geo.value[0], FileSize.geo.value[1], self.screen)] # geo »ı¼º
+        
+        # À¯ÀüÁ¤º¸ »ı¼ºÇÏ±â
+        self.layers = [input_layer()]
+
+        assert len(self.geo) == len(self.layers)
 
 
     def playgame(self):
         game_over = False
-        sysfont=pygame.font.SysFont(None, 25) # ì¶œë ¥í•  ë¬¸ì¥ì˜ í°íŠ¸
-
-        self.key=K_LEFT
+        sysfont=pygame.font.SysFont(None, 25) # Ãâ·ÂÇÒ ¹®ÀåÀÇ ÆùÆ®
+        
         while not game_over:
             self.screen.fill(WHITE)
-            for event in pygame.event.get():
-                if event.type == QUIT: # ì¢…ë£Œ ë²„íŠ¼ì„ ëˆ„ë¥´ë©´ ëë‚´ê¸°
+
+            # °ÔÀÓ Á¾·áÀÔ·Â È®ÀÎ
+            """for event in pygame.event.get():
+                if event.type == QUIT: # Á¾·á ¹öÆ°À» ´©¸£¸é ³¡³»±â
                     pygame.quit()
                     sys.exit()
-                elif event.type == KEYDOWN: # keyê°€ ëˆŒë¦¬ë©´
-                    self.key = event.key # ì…ë ¥ë°›ëŠ” keyë¥¼ self.keyì— ë„£ì–´ ì¤€ë‹¤
-                elif event.type == KEYUP:
-                    self.key = K_LEFT # ìŠ¤í˜ì´ìŠ¤ë°”ê°€ ì•„ë‹Œ í‚¤ë¥¼ ë„£ì–´ ì¤˜ì•¼ í•˜ëŠ”ë° ì–´ë–»ê²Œ í• ì§€ ëª°ë¼ì„œ ì¼ë‹¨ ì´ë ‡ê²Œ ë„£ì–´ ì¤¬ìŠµë‹ˆë‹¤.
+            """
+            for ly in self.layers:
+                print(ly.get_input()) #  ¸ğµç ·¹ÀÌ¾î¿¡ ´ëÇØ ÀÔ·Â È®ÀÎ
             
             if not game_over:
                 self.current_score += 0.15
                 score_image = sysfont.render("High score : {}     score : {}".format(int(self.high_score), int(self.current_score)), True, BLACK)
-                self.screen.blit(score_image, (width * 0.7, 0)) # ì ìˆ˜íŒ ì¶œë ¥
-                self.screen.blit(self.geo.image, self.geo.move(self.key,self.gamespeed)) # self.geo.move(key, gamespeed)ë¥¼ ì´ìš©í•´ì„œ geoë¥¼ ì´ë™ì‹œí‚¤ê³  ê·¸ê²ƒì„ ì¶œë ¥
+                self.screen.blit(score_image, (width * 0.7, 0)) # Á¡¼öÆÇ Ãâ·Â
+                
+                for idx, geo in enumerate(self.geo): # ¸ğµç geo¿¡ ´ëÇØ¼­ ÀÔ·Â Ã³¸® ¹× ±×¸®±â ÀÛ¾÷ ¼öÇà
+                    self.screen.blit(geo.image, geo.move(self.layers[idx],self.gamespeed)) # self.geo.move(key, gamespeed)¸¦ ÀÌ¿ëÇØ¼­ geo¸¦ ÀÌµ¿½ÃÅ°°í ±×°ÍÀ» Ãâ·Â
                 pygame.display.update()
                 self.clock.tick(FPS)
 
@@ -69,7 +77,7 @@ class Game():
                     elif event.type == pygame.KEYDOWN:
                         game_start = True 
 
-            # introì— í•„ìš”í•œ ì´ë¯¸ì§€ êµ¬ì„±
+            # intro¿¡ ÇÊ¿äÇÑ ÀÌ¹ÌÁö ±¸¼º
             self.start_image, self.start_image_rect = load_image(FileName.background.value, FileSize.background.value[0], FileSize.background.value[1], -1)# sysfont.render("Press any key to Start...", True, (255,255,255))   
             self.screen.blit(self.start_image, (0, 0))
             self.intro_image, self.intro_image_rect = load_image(FileName.title.value, FileSize.title.value[0], FileSize.title.value[1], -1)
@@ -78,7 +86,7 @@ class Game():
             self.screen.blit(self.start_txt_image, (width * 0.3, height * 0.7))
 
             pygame.display.update()
-                        # ì•„ë¬´ í‚¤ë‚˜ ëˆ„ë¥´ë©´ ìŠ¤í…Œì´ì§€ ìƒì„±í•˜ê³  geo ì¶œë ¥í•´ì„œ ê²Œì„ ì‹œì‘
+                        # ¾Æ¹« Å°³ª ´©¸£¸é ½ºÅ×ÀÌÁö »ı¼ºÇÏ°í geo Ãâ·ÂÇØ¼­ °ÔÀÓ ½ÃÀÛ
             self.clock.tick(FPS)
             
         return True
