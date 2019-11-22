@@ -5,6 +5,7 @@ from network import Network     # network 클래스
 class input_layer:
     usermode = True # usermode
     ai = None
+    keypress = False # keypressed value
     def __init__(self, usmode = True):
         self.usermode = usmode
         self.ai = None
@@ -16,8 +17,16 @@ class input_layer:
         if self.usermode == True:
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                    self.keypress = True # set keypress true
                     return True
-            return False
+                else if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
+                    self.keypress = False # set keypress false
+                    return False
+            return keypress
         else:
             assert self.ai != None
-            return self.ai.get_decision()
+            self.keypress = Bool(self.ai.get_decision())
+            return self.keypress
+    
+    def get_key(self):
+        return self.keypress
