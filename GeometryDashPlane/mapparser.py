@@ -5,14 +5,13 @@ from maplinker import MapLinker
 
 class MapParser():
     def __init__(self):
-        
-    
-    def parse(self, list, screen):
         self.arr = [] # list에 담겨 있는 문자열을 숫자들로 바꿔 줌
         self.objs = []
         self.bricks = []
         self.spikes = []
         self.map_width = int(list[0])
+    
+    def parse(self, list, screen):
         del list[0]
         for s in list:
             line = s.split(' ')
