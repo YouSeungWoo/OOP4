@@ -20,6 +20,7 @@ class FileName(enum.Enum):
     geo = 'character.png'
     spike = 'large_white_spike.png' # 추가
     background = 'background_main.png'
+    mapfiles = []
 
 class FileSize(enum.Enum):
     title = (1155, 155)
