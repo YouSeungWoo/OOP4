@@ -46,7 +46,7 @@ class Game():
         gameover_image = sysfont.render("Game Over...", True, BLACK)
         score_image = sysfont.render("High score : {}     score : {}".format(int(self.high_score), int(self.current_score)), True, BLACK)
         self.screen.blit(score_image, (width * 0.7, 0)) # 점수판 출력
-        self.screen.blit(geo.image, geo.rect.topleft)
+        self.screen.blit(self.geo[0].image, self.geo[0].rect.topleft)
         pygame.display.update()
         
         # game loop
