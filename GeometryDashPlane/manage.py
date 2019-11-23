@@ -22,7 +22,7 @@ class FileName(enum.Enum):
     brick = ['Brick2.png', 'Tile.png']
     background = 'background_main.png'
     map_sprites = 'map'
-    mapfiles = ['map1.txt']
+    mapfiles = ['map1.txt', 'map2.txt', 'map3.txt']
 
 class FileSize(enum.Enum):
     title = (1155, 155)

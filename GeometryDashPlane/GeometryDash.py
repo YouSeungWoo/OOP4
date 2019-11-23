@@ -130,7 +130,8 @@ class Game():
     def start(self):
         is_start = self.intro(True)
         if is_start:
-            self.playgame()
+            while True:
+                self.playgame()
 
             
 # ====================================================
