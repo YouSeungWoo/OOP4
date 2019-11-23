@@ -31,7 +31,7 @@ class MapLinker:
     def get_next():
         ret_list = []
         for d in self.mapdata:
-            if is_match(self.before_get, d):
+            if self.is_match(self.before_get, d):
                 ret_list.append(d)
         idx = random.Random.randint(0,len(ret_list))
         self.before_get = ret_list[idx]
