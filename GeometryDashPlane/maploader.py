@@ -22,7 +22,7 @@ class MapLoader():
                 j.y=j.y*scr_size[1]//10
         return ret
 
-    def check_scroll(speed):
+    def check_scroll(self,speed):
         self.scroll+=speed
         if self.scroll%map_width!=0:
             return false
