@@ -1,10 +1,11 @@
 # 게임 전체에 이용되는 변수나 기타 게임 관리에 필요한 함수를 담당하는 파일
 
-import enum, os, pygame
+import enum, os, pygame, sys
+from collision import *
 
-FPS = 60
-scr_size = (width, height) = (900, 150)
-gravity = 0.1
+FPS = 120
+scr_size = (width, height) = (1280, 600)
+gravity = 0.2
 x_speed = 10
 
 BLACK = (0, 0, 0)
@@ -15,16 +16,29 @@ geo_pos = width / 15
 class FileName(enum.Enum):
     sprites = 'image'               # 이미지 파일이 들어있는 폴더 경로
     title = 'title.png'             # 이미지 파일 이름들
-    title_text = 'key_text.png'
+    start_txt = 'key_text.png'
     geo = 'character.png'
-    thorn = ''
+    spike = 'large_white_spike.png'
     background = 'background_main.png'
 
 class FileSize(enum.Enum):
-    title = (900, 150)
-    title_text = (100, 100)
-    geo = (50, 50)
-    background = (1000, 200)
+    title = (1155, 155)
+    start_txt = (498, 67)
+    geo = (90, 58)
+    background = (width, height)
+    
+
+class Hitbox(enum.Enum):
+    v = Vector
+    geo = Concave_Poly(v(0, 0), \
+        [v(-5, -18), v(-6, -17), v(-10, -17), v(-13, -19), v(-13, -11), v(-15, -13), v(-16, -13), v(-20, -17), v(-25, -17), v(-25, -15), v(-23, -13), v(-23, -12), v(-18, -7), v(-18, -5), v(-22, -5), v(-23, -4), v(-24, -4), v(-25, -3), \
+        v(-23, 1), v(-24, 2), v(-24, 5), v(-23, 6), v(-21, 6), v(-21, 8), v(-22, 9), v(-22, 10), v(-20, 12), v(-19, 12), v(-17, 10), v(-16, 11), v(-16, 12), v(-15, 12), v(-13, 10), v(-11, 10), v(-11, 12), v(-9, 12), v(-6, 9), v(-4, 11), \
+        v(8, 11), v(9, 10), v(11, 10), v(12, 11), v(16, 11), v(20, 7), v(20, 4), \
+        v(13, -4), v(8, -4), v(8, -19), v(4, -17), v(2, -17), v(1, -18)])
+
+    spike = Concave_Poly(v(0, 0), \
+        [
+            ])
 
 class BackgroundImage(enum.Enum):
     stage1 = None;
