@@ -24,7 +24,7 @@ class FileName(enum.Enum):
 class FileSize(enum.Enum):
     title = (1155, 155)
     start_txt = (498, 67)
-    geo = (90, 58)
+    geo = (172, 110)
     background = (width, height)
     spike = (60, 60)               # 추가
     
