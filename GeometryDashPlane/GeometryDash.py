@@ -20,6 +20,7 @@ class Game():
         self.current_score = 0
         self.gamespeed = x_speed
         self.bgcolor = WHITE
+        self.maploader = MapLoader()
     
         self.screen = pygame.display.set_mode(scr_size)
         self.clock = pygame.time.Clock()
@@ -62,8 +63,8 @@ class Game():
             if game_ing: # playing loop
                 self.screen.fill(self.bgcolor) #draw background
                 
-                if MapLoader.check_scroll(self.gamespeed):
-                    objs = MapLoader.get_obj()
+                if self.maploader.check_scroll(self.gamespeed):
+                    objs = self.maploader.get_obj()
                     for o in objs[0]:
                         self.bricks.add(o)
                     for o in objs[1]:
