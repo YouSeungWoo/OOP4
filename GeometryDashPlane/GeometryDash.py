@@ -8,7 +8,7 @@ import numpy as np
 import random, copy, os, sys
 from input_layer import input_layer
 from pygame.locals import QUIT, Rect, KEYDOWN, KEYUP, K_SPACE, K_LEFT # 입력받을 키(spacebar), spacebar가 아닌 다른 키(일단 임의로 left key로 정함)
-
+from maploader import MapLoader
 
 class Game():
     def __init__(self):
@@ -62,16 +62,24 @@ class Game():
             if game_ing: # playing loop
                 self.screen.fill(self.bgcolor) #draw background
                 
+                if MapLoader.check_scroll(self.gamespeed):
+                    objs = MapLoader.get_obj()
+                    for o in objs[0]:
+                        self.bricks.add(o)
+                    for o in objs[1]:
+                        self.spikes.add(o)
+                
                 self.current_score += 0.15
                 score_image = sysfont.render("High score : {}     score : {}".format(int(self.high_score), int(self.current_score)), True, BLACK)
                 self.screen.blit(score_image, (width * 0.7, 0)) # 점수판 출력
                 for idx, geo in enumerate(self.geo): # 모든 geo에 대해서 입력 처리 및 그리기 작업 수행
-                    self.screen.blit(geo.image, geo.move(self.layers[idx],self.gamespeed)) # self.geo.move(key, gamespeed)를 이용해서 geo를 이동시키고 그것을 출력
+                    self.screen.blit(geo.image, geo.move(self.layers[idx], self.gamespeed)) # self.geo.move(key, gamespeed)를 이용해서 geo를 이동시키고 그것을 출력
                 if int(self.current_score) % 5 == 0:
-                    self.spike = Spike(80,80,self.screen)
+                    self.spike = Spike(FileSize.spike.value[0], FileSize.spike.value[1], self.screen)
                     self.spikes.add(self.spike)
                 self.spikes.update()
                 self.spikes.draw(self.screen)
+
                 if self.geo[0].colli_Check(self.spikes):
                     game_ing = False
                     game_over = True
@@ -83,11 +91,8 @@ class Game():
                     game_ing = True # game start
                     self.bgcolor = BLACK # background set
         # game over : out of game loop
-        self.bgcolor = WHITE
-        self.screen.fill(self.bgcolor)
-        self.screen.blit(gameover_image, (width/2-gameover_image.get_rect().width/2,height/2-gameover_image.get_rect().height/2))
+        self.screen.blit(gameover_image, (width/2-gameover_image.get_rect().width/2, height/2-gameover_image.get_rect().height/2))
         pygame.display.update()
-        self.clock.tick(1)
 
     def intro(self, user_mode):
         game_start = False
@@ -126,12 +131,4 @@ class Game():
             
 # ====================================================
 g= Game()
-while True:
-    g.start()
-
-
-
-
-
-
-
+g.start()
