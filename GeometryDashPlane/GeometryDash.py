@@ -74,11 +74,10 @@ class Game():
                 self.screen.blit(score_image, (width * 0.7, 0)) # 점수판 출력
                 for idx, geo in enumerate(self.geo): # 모든 geo에 대해서 입력 처리 및 그리기 작업 수행
                     self.screen.blit(geo.image, geo.move(self.layers[idx], self.gamespeed)) # self.geo.move(key, gamespeed)를 이용해서 geo를 이동시키고 그것을 출력
-                if int(self.current_score) % 5 == 0:
-                    self.spike = Spike(FileSize.spike.value[0], FileSize.spike.value[1], self.screen)
-                    self.spikes.add(self.spike)
+                self.bricks.update()
                 self.spikes.update()
                 self.spikes.draw(self.screen)
+                self.bricks.draw(self.screen)
 
                 if self.geo[0].colli_Check(self.spikes):
                     game_ing = False
