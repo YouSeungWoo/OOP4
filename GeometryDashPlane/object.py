@@ -74,17 +74,13 @@ class Geo(pygame.sprite.Sprite):
         return False
 
 class Spike(pygame.sprite.Sprite):
-    def __init__(self, size_x=-1, size_y=-1, screen = None, gamespeed = x_speed):
+    def __init__(self, size_x=-1, size_y=-1, type=0, rotate=0, x_coord=-1, y_coord=-1, screen = None, gamespeed = x_speed):
         pygame.sprite.Sprite.__init__(self, self.containers)
-        self.spike_image, self.rect = load_image(FileName.spike.value, size_x, size_y, None) # 이미지 로드
-        self.images = [self.spike_image, pygame.transform.rotate(self.spike_image, 180)]
-        self.x, self.y = self.rect.topleft
+        self.spike_image, self.rect = load_image(FileName.spike.value[type], size_x, size_y, None) # 이미지 로드
+        self.images = [self.spike_image, pygame.transform.rotate(self.spike_image, rotate)]
+        self.image = self.images[1]
+        self.x, self.y = (x_coord, y_coord)
         self.velocity = -gamespeed
-        self.point = [(width, 0.9*height), (width, 0.1*height)]
-        r = random.randint(0,1)
-        self.image = self.images[r]
-        self.rect.bottomleft = self.point[r]
-    
     def draw(self):
         self.screen.blit(self.spike_image,self.rect)
         
@@ -95,30 +91,18 @@ class Spike(pygame.sprite.Sprite):
 
         
 class Brick(pygame.sprite.Sprite):
-    def __init__(self, size_x=-1, size_y=-1, screen = None, gamespeed = x_speed):
+    def __init__(self, size_x=-1, size_y=-1, type=0, rotate=0, x_coord=-1, y_coord=-1, screen = None, gamespeed = x_speed):
         pygame.sprite.Sprite.__init__(self, self.containers)
-        self.brick_image, self.rect = load_image(FileName.brick.value, size_x, size_y, None)
-        self.image = self.brick_image
-        self.x, self.y = self.rect.topleft
+        self.brick_image, self.rect = load_image(FileName.brick.value[type], size_x, size_y, None)
+        self.images = [self.brick_image, pygame.transform.rotate(self.brick_image, rotate)]        
+        self.image = self.images[1]
+        self.x, self.y = (x_coord, y_coord)
         self.velocity = -gamespeed
     
     def draw(self):
-        self.screen.blit(self.brick_image, self.rect)
+        screen.blit(self.brick_image, self.rect)
         
     def update(self):
         self.rect.move_ip(self.velocity, 0)
         if self.rect.right < 0:
             self.kill()
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        

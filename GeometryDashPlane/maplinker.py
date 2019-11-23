@@ -1,4 +1,4 @@
-import random
+import random, os
 from manage import FileName
 
 class MapLinker:
@@ -6,15 +6,14 @@ class MapLinker:
     #class initializer
     def __init__(self):
         self.mapdata = []
-        self.mapfiles = FileName.mapfiles # get filenames
+        self.mapfiles = FileName.mapfiles.value # get filenames
         self.before_get = None # all cases are available
-        
         # read all files
         for mp in self.mapfiles:
-            with open(mp, "r") as f: # open file
+            with open(os.path.join(FileName.map_sprites.value, mp), "r") as f: # open file
                 data = str(f.read()).split("\n")
                 assert len(data) >= 4
-                mp.append(data)
+                self.mapdata.append(data)
                 
     #extract UML type
     def is_match(self, data1, data2):
@@ -28,11 +27,13 @@ class MapLinker:
                     return True
         return False
     
-    def get_next():
+    def get_next(self):
         ret_list = []
         for d in self.mapdata:
             if self.is_match(self.before_get, d):
                 ret_list.append(d)
-        idx = random.Random.randint(0,len(ret_list))
+                print("get!!!")
+        print(len(ret_list))
+        idx = random.randint(0, len(ret_list) - 1)
         self.before_get = ret_list[idx]
         return ret_list[idx]
