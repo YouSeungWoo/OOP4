@@ -18,16 +18,18 @@ class FileName(enum.Enum):
     title = 'title.png'             # 이미지 파일 이름들
     start_txt = 'key_text.png'
     geo = 'character.png'
-    spike = 'large_white_spike.png' # 추가
+    spike = ['large_white_spike.png', 'medium_white_spike.png', 'small_white_spike.png'] # 추가
+    brick =['Brick2.png', 'Tile.png']
     background = 'background_main.png'
-    mapfiles = []
+    map_sprites = 'map'
+    mapfile = ['map1.txt']
 
 class FileSize(enum.Enum):
     title = (1155, 155)
     start_txt = (498, 67)
     geo = (172, 110)
     background = (width, height)
-    spike = (60, 60)               # 추가
+    spike = [(60, 60),(2,2),(3,3)]               # 추가
     
 
 class Hitbox(enum.Enum):
@@ -38,16 +40,16 @@ class Hitbox(enum.Enum):
         v(8, 11), v(9, 10), v(11, 10), v(12, 11), v(16, 11), v(20, 7), v(20, 4), \
         v(13, -4), v(8, -4), v(8, -19), v(4, -17), v(2, -17), v(1, -18)])
 
-    spike = Concave_Poly(v(0, 0), \
+    """spike = Concave_Poly(v(0, 0), \
         [
-            ])
+            ])"""
 
 class BackgroundImage(enum.Enum):
     stage1 = None;
 
 
 def load_image(name, size_x = -1, size_y = -1, colorkey = None):
-    fullname = os.path.join('image', name)      # sprites와 name을 결합시켜 fullname에 저장
+    fullname = os.path.join(FileName.sprites.value, name)      # sprites와 name을 결합시켜 fullname에 저장
     image = pygame.image.load(fullname)           # fullname을 load해 image에 저장
 
     image.convert()                       # 그냥 해줘야 한다고 함
