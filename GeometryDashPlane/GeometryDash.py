@@ -19,6 +19,7 @@ class Game():
         self.n_gen = 0
         self.current_score = 0
         self.gamespeed = x_speed
+        self.bgcolor = WHITE
     
         self.screen = pygame.display.set_mode(scr_size)
         self.clock = pygame.time.Clock()
@@ -34,27 +35,33 @@ class Game():
         # setup initial condition
         game_over = False # gameover flag
         game_ing = False # game palying flag
-        sysfont=pygame.font.SysFont(None, 25) # 출력할 문장의 폰트
-        self.screen.fill(WHITE) # default background color setup
         
+        # setup images and fonts
+        sysfont=pygame.font.SysFont(None, 25) # 출력할 문장의 폰트
+        gameover_image = sysfont.render("Game Over...", True, BLACK)
+        score_image = sysfont.render("High score : {}     score : {}".format(int(self.high_score), int(self.current_score)), True, BLACK)
+
+        # setup sprites
         self.bricks = pygame.sprite.Group()
         Brick.containers = self.bricks
         self.spikes = pygame.sprite.Group()
         Spike.containers = self.spikes
-        
+      
         # initial image draw
-        gameover_image = sysfont.render("Game Over...", True, BLACK)
-        score_image = sysfont.render("High score : {}     score : {}".format(int(self.high_score), int(self.current_score)), True, BLACK)
+        self.screen.fill(self.bgcolor) # default background color setup
         self.screen.blit(score_image, (width * 0.7, 0)) # 점수판 출력
         self.screen.blit(self.geo[0].image, self.geo[0].rect.topleft)
         pygame.display.update()
         
         # game loop
         while not game_over:
+            
             for ly in self.layers: # input check
                 print(ly.get_input()) #  모든 레이어에 대해 입력 확인
             
             if game_ing: # playing loop
+                self.screen.fill(self.bgcolor) #draw background
+                
                 self.current_score += 0.15
                 score_image = sysfont.render("High score : {}     score : {}".format(int(self.high_score), int(self.current_score)), True, BLACK)
                 self.screen.blit(score_image, (width * 0.7, 0)) # 점수판 출력
@@ -74,7 +81,7 @@ class Game():
             else: # game start check
                 if (self.layers[0].get_key() and self.layers[0].usermode == True) or self.layers[0].usermode == False:
                     game_ing = True # game start
-                    self.screen.fill(BLACK) # background set
+                    self.bgcolor = BLACK # background set
         # game over : out of game loop
         self.screen.blit(gameover_image, (width/2-gameover_image.get_rect().width/2,height/2-gameover_image.get_rect().height/2))
         pygame.display.update()
