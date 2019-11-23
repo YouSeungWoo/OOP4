@@ -1,5 +1,5 @@
 from maplinker import *
-from maparser import *
+from mapparser import *
 from manage import *
 
 class MapLoader():
