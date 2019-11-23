@@ -52,25 +52,8 @@ class Game():
         while not game_over:
             self.screen.fill(WHITE)
             
-            # 게임 종료입력 확인
-            """for event in pygame.event.get():
-                if event.type == QUIT: # 종료 버튼을 누르면 끝내기
-                    pygame.quit()
-                    sys.exit()
-            """
             for ly in self.layers:
                 print(ly.get_input()) #  모든 레이어에 대해 입력 확인
-                
-            for event in pygame.event.get():
-                if event.type == QUIT: # 종료 버튼을 누르면 끝내기
-                    pygame.quit()
-                    sys.exit()
-                elif event.type == KEYDOWN: # key가 눌리면
-                    self.key = event.key # 입력받는 key를 self.key에 넣어 준다
-                    if(self.key == K_SPACE):
-                        game_ing = True
-                elif event.type == KEYUP:
-                    self.key = K_LEFT # 스페이스바가 아닌 키를 넣어 줘야 하는데 어떻게 할지 몰라서 일단 이렇게 넣어 줬습니다.
             
             if game_ing:
                 self.current_score += 0.15
