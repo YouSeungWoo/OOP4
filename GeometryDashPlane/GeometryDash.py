@@ -23,39 +23,38 @@ class Game():
         self.screen = pygame.display.set_mode(scr_size)
         self.clock = pygame.time.Clock()
         pygame.display.set_caption('Geometry Dash: Plain')
-        self.geo = [Geo(FileSize.geo.value[0], FileSize.geo.value[1], self.screen)] # geo 생성
         
         # 유전정보 생성하기
+        self.geo = [Geo(FileSize.geo.value[0], FileSize.geo.value[1], self.screen)] # geo 생성
         self.layers = [input_layer()]
 
         assert len(self.geo) == len(self.layers)
 
     def playgame(self):
-        game_over = False
-        game_ing = False
+        # setup initial condition
+        game_over = False # gameover flag
+        game_ing = False # game palying flag
         sysfont=pygame.font.SysFont(None, 25) # 출력할 문장의 폰트
-        self.screen.fill(WHITE)
+        self.screen.fill(WHITE) # default background color setup
         
-        gameover_image = sysfont.render("Game Over...", True, BLACK)
-        score_image = sysfont.render("High score : {}     score : {}".format(int(self.high_score), int(self.current_score)), True, BLACK)
-        self.screen.blit(score_image, (width * 0.7, 0)) # 점수판 출력
-        for idx, geo in enumerate(self.geo):
-            self.screen.blit(geo.image, geo.move(self.layers[idx],self.gamespeed)) # self.geo.move(key, gamespeed)를 이용해서 geo를 이동시키고 그것을 출력
-        pygame.display.update()
         self.bricks = pygame.sprite.Group()
         Brick.containers = self.bricks
         self.spikes = pygame.sprite.Group()
         Spike.containers = self.spikes
-        self.spike = Spike(80,80, self.screen)
-        self.spikes.add(self.spike)
         
+        # initial image draw
+        gameover_image = sysfont.render("Game Over...", True, BLACK)
+        score_image = sysfont.render("High score : {}     score : {}".format(int(self.high_score), int(self.current_score)), True, BLACK)
+        self.screen.blit(score_image, (width * 0.7, 0)) # 점수판 출력
+        self.screen.blit(geo.image, geo.rect.topleft)
+        pygame.display.update()
+        
+        # game loop
         while not game_over:
-            self.screen.fill(BLACK)
-            
-            for ly in self.layers:
+            for ly in self.layers: # input check
                 print(ly.get_input()) #  모든 레이어에 대해 입력 확인
             
-            if game_ing:
+            if game_ing: # playing loop
                 self.current_score += 0.15
                 score_image = sysfont.render("High score : {}     score : {}".format(int(self.high_score), int(self.current_score)), True, BLACK)
                 self.screen.blit(score_image, (width * 0.7, 0)) # 점수판 출력
@@ -71,11 +70,12 @@ class Game():
                     game_over = True
                 pygame.display.update()
                 self.clock.tick(FPS)
+                
             else: # game start check
-                assert self.layers[0].usermode == True
-                if self.layers[0].get_key():
+                if (self.layers[0].get_key() and self.layers[0].usermode == True) or self.layers[0].usermode == False:
                     game_ing = True # game start
-        
+                    self.screen.fill(BLACK) # background set
+        # game over : out of game loop
         self.screen.blit(gameover_image, (width/2-gameover_image.get_rect().width/2,height/2-gameover_image.get_rect().height/2))
         pygame.display.update()
 
@@ -112,7 +112,9 @@ class Game():
         is_start = self.intro(True)
         if is_start:
             self.playgame()
-        
+
+            
+# ====================================================
 g= Game()
 g.start()
 
