@@ -3,7 +3,7 @@
 import pygame
 from generation import Generation
 from manage import *
-from object import Geo, Spike
+from object import Geo, Spike, Brick
 import numpy as np
 import random, copy, os, sys
 from input_layer import input_layer
@@ -19,61 +19,80 @@ class Game():
         self.n_gen = 0
         self.current_score = 0
         self.gamespeed = x_speed
+        self.bgcolor = WHITE
     
-        
         self.screen = pygame.display.set_mode(scr_size)
         self.clock = pygame.time.Clock()
         pygame.display.set_caption('Geometry Dash: Plain')
-        self.geo = [Geo(FileSize.geo.value[0], FileSize.geo.value[1], self.screen)] # geo 생성
-        
         
         # 유전정보 생성하기
+        self.geo = [Geo(FileSize.geo.value[0], FileSize.geo.value[1], self.screen)] # geo 생성
         self.layers = [input_layer()]
 
         assert len(self.geo) == len(self.layers)
 
     def playgame(self):
-        game_over = False
-        game_ing = False
-        sysfont=pygame.font.SysFont(None, 25) # 출력할 문장의 폰트
-        self.screen.fill(WHITE)
+        # setup initial condition
+        game_over = False # gameover flag
+        game_ing = False # game palying flag
         
-        score_image = sysfont.render("High score : {}     score : {}".format(int(self.high_score), int(self.current_score)), True, BLACK)
+        # setup images and fonts
+        sysfont=pygame.font.SysFont(None, 25) # 출력할 문장의 폰트
         gameover_image = sysfont.render("Game Over...", True, BLACK)
-        self.screen.blit(score_image, (width * 0.7, 0)) # 점수판 출력
-        for idx, geo in enumerate(self.geo):
-            self.screen.blit(geo.image, geo.move(self.layers[idx],self.gamespeed)) # self.geo.move(key, gamespeed)를 이용해서 geo를 이동시키고 그것을 출력
-        pygame.display.update()
+        score_image = sysfont.render("High score : {}     score : {}".format(int(self.high_score), int(self.current_score)), True, BLACK)
+
+        # setup sprites
+        self.bricks = pygame.sprite.Group()
+        Brick.containers = self.bricks
         self.spikes = pygame.sprite.Group()
         Spike.containers = self.spikes
-        self.spike = Spike(80,80, self.screen)
-        self.spikes.add(self.spike)
+      
+        # initial image draw
+        self.screen.fill(self.bgcolor) # default background color setup
+        self.screen.blit(score_image, (width * 0.7, 0)) # 점수판 출력
+        self.screen.blit(self.geo[0].image, self.geo[0].rect.topleft)
+        pygame.display.update()
         
+        # game loop
         while not game_over:
-            self.screen.fill(WHITE)
             
-            for ly in self.layers:
+            for ly in self.layers: # input check
                 print(ly.get_input()) #  모든 레이어에 대해 입력 확인
             
-            if game_ing:
+            if game_ing: # playing loop
+                self.screen.fill(self.bgcolor) #draw background
+                
+                if MapLoader.check_scroll(self.gamespeed):
+                    objs = MapLoader.get_obj()
+                    for o in objs[0]:
+                        self.bricks.add(o)
+                    for o in objs[1]:
+                        self.spikes.add(o)
+                
                 self.current_score += 0.15
                 score_image = sysfont.render("High score : {}     score : {}".format(int(self.high_score), int(self.current_score)), True, BLACK)
                 self.screen.blit(score_image, (width * 0.7, 0)) # 점수판 출력
                 for idx, geo in enumerate(self.geo): # 모든 geo에 대해서 입력 처리 및 그리기 작업 수행
-                    self.screen.blit(geo.image, geo.move(self.layers[idx],self.gamespeed)) # self.geo.move(key, gamespeed)를 이용해서 geo를 이동시키고 그것을 출력
-                if int(self.current_score * 100) % 1000 == 5:
-                    self.spike = Spike(80,80,self.screen)
+                    self.screen.blit(geo.image, geo.move(self.layers[idx], self.gamespeed)) # self.geo.move(key, gamespeed)를 이용해서 geo를 이동시키고 그것을 출력
+                if int(self.current_score) % 5 == 0:
+                    self.spike = Spike(FileSize.spike.value[0], FileSize.spike.value[1], self.screen)
                     self.spikes.add(self.spike)
                 self.spikes.update()
                 self.spikes.draw(self.screen)
+
+                if self.geo[0].colli_Check(self.spikes):
+                    game_ing = False
+                    game_over = True
                 pygame.display.update()
                 self.clock.tick(FPS)
-            else: # wating for player
-                assert self.layers[0].usermode == True
-                if self.layers[0].get_key():
+                
+            else: # game start check
+                if (self.layers[0].get_key() and self.layers[0].usermode == True) or self.layers[0].usermode == False:
                     game_ing = True # game start
-        self.screen.blit(gameover_image, (width/2-self.gameover_image.get_rect().width/2,height/2-self.gameover_image.get_rect().height/2))
-    
+                    self.bgcolor = BLACK # background set
+        # game over : out of game loop
+        self.screen.blit(gameover_image, (width/2-gameover_image.get_rect().width/2, height/2-gameover_image.get_rect().height/2))
+        pygame.display.update()
 
     def intro(self, user_mode):
         game_start = False
@@ -105,9 +124,11 @@ class Game():
         return True
 
     def start(self):
-        is_start=self.intro(True)
+        is_start = self.intro(True)
         if is_start:
             self.playgame()
-        
+
+            
+# ====================================================
 g= Game()
 g.start()
