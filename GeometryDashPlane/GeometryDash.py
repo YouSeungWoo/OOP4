@@ -3,9 +3,10 @@
 import pygame
 from generation import Generation
 from manage import *
-from object import Geo, Thorn
+from object import Geo, Spike, Brick
 import numpy as np
 import random, copy, os, sys
+from input_layer import input_layer
 from pygame.locals import QUIT, Rect, KEYDOWN, KEYUP, K_SPACE, K_LEFT # 입력받을 키(spacebar), spacebar가 아닌 다른 키(일단 임의로 left key로 정함)
 
 
@@ -19,33 +20,46 @@ class Game():
         self.current_score = 0
         self.gamespeed = x_speed
     
-        
         self.screen = pygame.display.set_mode(scr_size)
         self.clock = pygame.time.Clock()
         pygame.display.set_caption('Geometry Dash: Plain')
-        self.geo = Geo(FileSize.geo.value[0], FileSize.geo.value[1], self.screen) # geo 생성
+        self.geo = [Geo(FileSize.geo.value[0], FileSize.geo.value[1], self.screen)] # geo 생성
         
-        
-# 유전정보 생성하기
+        # 유전정보 생성하기
+        self.layers = [input_layer()]
+
+        assert len(self.geo) == len(self.layers)
+
     def playgame(self):
         game_over = False
         game_ing = False
-        self.key=K_LEFT
         sysfont=pygame.font.SysFont(None, 25) # 출력할 문장의 폰트
         self.screen.fill(WHITE)
         
+        gameover_image = sysfont.render("Game Over...", True, BLACK)
         score_image = sysfont.render("High score : {}     score : {}".format(int(self.high_score), int(self.current_score)), True, BLACK)
-        velocity_image = sysfont.render("velocity : {}".format(int(self.geo.velocity)), True, BLACK)
-        self.screen.blit(velocity_image,(0,0))
         self.screen.blit(score_image, (width * 0.7, 0)) # 점수판 출력
-        self.screen.blit(self.geo.image, self.geo.move(self.key,self.gamespeed)) # self.geo.move(key, gamespeed)를 이용해서 geo를 이동시키고 그것을 출력
+        for idx, geo in enumerate(self.geo):
+            self.screen.blit(geo.image, geo.move(self.layers[idx],self.gamespeed)) # self.geo.move(key, gamespeed)를 이용해서 geo를 이동시키고 그것을 출력
         pygame.display.update()
-        self.thorns = pygame.sprite.Group()
-        Thorn.containers = self.thorns
-        self.thorn = Thorn(80,80, self.screen)
-        self.thorns.add(self.thorn)
+        self.bricks = pygame.sprite.Group()
+        Brick.containers = self.bricks
+        self.spikes = pygame.sprite.Group()
+        Spike.containers = self.spikes
+        self.spike = Spike(80,80, self.screen)
+        self.spikes.add(self.spike)
+        
         while not game_over:
-            self.screen.fill(WHITE)
+            self.screen.fill(BLACK)
+            
+            # 게임 종료입력 확인
+            """for event in pygame.event.get():
+                if event.type == QUIT: # 종료 버튼을 누르면 끝내기
+                    pygame.quit()
+                    sys.exit()
+            """
+            for ly in self.layers:
+                print(ly.get_input()) #  모든 레이어에 대해 입력 확인
             for event in pygame.event.get():
                 if event.type == QUIT: # 종료 버튼을 누르면 끝내기
                     pygame.quit()
@@ -60,18 +74,22 @@ class Game():
             if game_ing:
                 self.current_score += 0.15
                 score_image = sysfont.render("High score : {}     score : {}".format(int(self.high_score), int(self.current_score)), True, BLACK)
-                velocity_image = sysfont.render("velocity : {}".format(int(self.geo.velocity)), True, BLACK)
-                self.screen.blit(velocity_image,(0,0))
                 self.screen.blit(score_image, (width * 0.7, 0)) # 점수판 출력
-                self.screen.blit(self.geo.image, self.geo.move(self.key,self.gamespeed)) # self.geo.move(key, gamespeed)를 이용해서 geo를 이동시키고 그것을 출력
-          #      self.screen.blit(self.thorns.image, self.thorns.move())
-                if int(self.current_score * 100) % 1000 == 5:
-                    self.thorn = Thorn(80,80,self.screen)
-                    self.thorns.add(self.thorn)
-                self.thorns.update()
-                self.thorns.draw(self.screen)
+                for idx, geo in enumerate(self.geo): # 모든 geo에 대해서 입력 처리 및 그리기 작업 수행
+                    self.screen.blit(geo.image, geo.move(self.layers[idx],self.gamespeed)) # self.geo.move(key, gamespeed)를 이용해서 geo를 이동시키고 그것을 출력
+                if int(self.current_score) % 5 == 0:
+                    self.spike = Spike(80,80,self.screen)
+                    self.spikes.add(self.spike)
+                self.spikes.update()
+                self.spikes.draw(self.screen)
+                if self.geo[0].colli_Check(self.spikes):
+                    game_ing = False
+                    game_over = True
                 pygame.display.update()
                 self.clock.tick(FPS)
+        
+        self.screen.blit(gameover_image, (width/2-gameover_image.get_rect().width/2,height/2-gameover_image.get_rect().height/2))
+        pygame.display.update()
 
     def intro(self, user_mode):
         game_start = False
@@ -103,9 +121,16 @@ class Game():
         return True
 
     def start(self):
-        is_start=self.intro(True)
+        is_start = self.intro(True)
         if is_start:
             self.playgame()
         
 g= Game()
 g.start()
+
+
+
+
+
+
+
