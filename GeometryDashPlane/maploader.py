@@ -15,7 +15,7 @@ class MapLoader():
         d_obj={}
         ret, width = self.parser.parse(self.linker.get_next(), self.screen)
         self.map_width = self.next_width
-        self.next_width = width * (scr_size[0]//20)
+        self.next_width = (width + 1) * (scr_size[0]//20)
         for i in ret:
             for j in i:
                 print("DATA")
