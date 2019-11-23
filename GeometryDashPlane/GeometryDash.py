@@ -68,7 +68,10 @@ class Game():
                 self.spikes.draw(self.screen)
                 pygame.display.update()
                 self.clock.tick(FPS)
-        
+            else: # wating for player
+                assert self.layers[0].usermode == True
+                if self.layers[0].get_key():
+                    game_ing = True # game start
         self.screen.blit(gameover_image, (width/2-self.gameover_image.get_rect().width/2,height/2-self.gameover_image.get_rect().height/2))
     
 
