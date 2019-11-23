@@ -13,6 +13,8 @@ class MapParser():
     
     def parse(self, list, screen):
         del list[0]
+        del list[1]
+        del list[2]
         for s in list:
             line = s.split(' ')
             num = []

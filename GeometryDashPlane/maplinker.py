@@ -6,12 +6,11 @@ class MapLinker:
     #class initializer
     def __init__(self):
         self.mapdata = []
-        self.mapfiles = FileName.mapfiles # get filenames
+        self.mapfiles = FileName.mapfiles.value # get filenames
         self.before_get = None # all cases are available
-        
         # read all files
         for mp in self.mapfiles:
-            with open(mp, "r") as f: # open file
+            with open(os.path.join(FileName.map_sprites.value, mp), "r") as f: # open file
                 data = str(f.read()).split("\n")
                 assert len(data) >= 4
                 mp.append(data)
