@@ -83,8 +83,11 @@ class Game():
                     game_ing = True # game start
                     self.bgcolor = BLACK # background set
         # game over : out of game loop
+        self.bgcolor = WHITE
+        self.screen.fill(self.bgcolor)
         self.screen.blit(gameover_image, (width/2-gameover_image.get_rect().width/2,height/2-gameover_image.get_rect().height/2))
         pygame.display.update()
+        self.clock.tick(1)
 
     def intro(self, user_mode):
         game_start = False
@@ -123,7 +126,8 @@ class Game():
             
 # ====================================================
 g= Game()
-g.start()
+while True:
+    g.start()
 
 
 
