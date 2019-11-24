@@ -1,4 +1,4 @@
-# 실제 게임을 진행하는 파일
+# 맵뷰어
 
 import pygame
 from generation import Generation
