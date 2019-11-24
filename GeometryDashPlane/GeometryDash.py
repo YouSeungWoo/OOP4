@@ -41,7 +41,7 @@ class Game():
         # setup images and fonts
         sysfont=pygame.font.SysFont(None, 25) # 출력할 문장의 폰트
         gameover_image = sysfont.render("Game Over...", True, BLACK)
-        score_image = sysfont.render("High score : {}     score : {}".format(int(self.high_score), int(self.current_score)), True, BLACK)
+        score_image = sysfont.render("High score : {}     score : {}".format(int(self.high_score), int(self.current_score)), True, WHITE) # color changed
 
         # setup sprites
         self.bricks = pygame.sprite.Group()
@@ -58,7 +58,7 @@ class Game():
         # game loop
         while not game_over:
             for ly in self.layers: # input check
-                print(ly.get_input()) #  모든 레이어에 대해 입력 확인
+                ly.get_input() #  모든 레이어에 대해 입력 확인
 
             if game_ing: # playing loop
                 self.screen.fill(self.bgcolor) #draw background
@@ -71,8 +71,7 @@ class Game():
                         self.spikes.add(o)
                 
                 self.current_score += 0.15
-                score_image = sysfont.render("High score : {}     score : {}".format(int(self.high_score), int(self.current_score)), True, BLACK)
-                self.screen.blit(score_image, (width * 0.7, 0)) # 점수판 출력
+                score_image = sysfont.render("High score : {}     score : {}".format(int(self.high_score), int(self.current_score)), True, WHITE)
                 for idx, geo in enumerate(self.geo): # 모든 geo에 대해서 입력 처리 및 그리기 작업 수행
                     self.screen.blit(geo.image, geo.move(self.layers[idx], self.gamespeed)) # self.geo.move(key, gamespeed)를 이용해서 geo를 이동시키고 그것을 출력
                 self.bricks.update()
@@ -83,6 +82,7 @@ class Game():
                 if self.geo[0].colli_Check(self.spikes):
                     game_ing = False
                     game_over = True
+                self.screen.blit(score_image, (width * 0.7, 0)) # 점수판 출력
                 pygame.display.update()
                 self.clock.tick(FPS)
                 
@@ -91,6 +91,9 @@ class Game():
                     game_ing = True # game start
                     self.bgcolor = BLACK # background set
         # game over : out of game loop
+        if self.current_score > self.high_score:
+            self.high_score = self.current_score
+        self.current_score = 0
         self.clock.tick(1)
         self.bgcolor = (255,0,0)
         self.screen.fill(self.bgcolor)

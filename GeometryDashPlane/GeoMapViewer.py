@@ -53,7 +53,7 @@ class GeoMapViewer:
                         self.lines = []
                         self.xscroll = 0
                         print("Map to READ : ")
-                        self.load_map(input())
+                        self.load_map("map\\" + input()) # 11/24 수정. "map\\"을 추가해서 콘솔 창에 파일 명만 입력해도 되게 제작. 혹시 작동 안하면 "map\"으로 바꿔보기
                         print("Load Complete!")
                         helpme = False
                     elif event.key == pygame.K_LEFT:
@@ -89,7 +89,7 @@ class GeoMapViewer:
     def add_objs(self, objs):
         for i in objs:
             for j in i:
-                j.rect.topleft = (j.x*(scr_size[0]//20), j.y*(scr_size[1]//10))
+                j.rect.topleft = (j.x*(scr_size[0]//21), j.y*(scr_size[1]//10)) # 11/24 수정. width 분할을 21개로 해야 한다.
         for o in objs[0]:
             self.bricks.add(o)
         for o in objs[1]:

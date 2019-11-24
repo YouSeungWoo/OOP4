@@ -4,9 +4,9 @@ import enum, os, pygame, sys
 from collision import *
 
 FPS = 120
-scr_size = (width, height) = (1280, 600)
+scr_size = (width, height) = (1260, 600) # 11/24 수정. 화면 사이즈 조정
 gravity = 0.2
-x_speed = 10
+x_speed = 6 # 11/24 수정. 게임 속도 적당히 맞게 조정
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -18,19 +18,19 @@ class FileName(enum.Enum):
     title = 'title.png'             # 이미지 파일 이름들
     start_txt = 'key_text.png'
     geo = 'character.png'
-    spike = ['large_white_spike.png', 'medium_white_spike.png', 'small_white_spike.png'] # 추가
-    brick = ['Brick2.png', 'Tile.png']
+    spike = ['large_white_spike.png', 'half_white_spike.png', 'small_white_spike.png'] # 11/24 수정. 파일 이름 잘못 되어 있어 수정
+    brick = ['Brick.png', 'Tile.png', 'empty_block.png'] # 11/24 수정. 파일 추가
     background = 'background_main.png'
     map_sprites = 'map'
-    mapfiles = ['map1.txt', 'map2.txt', 'map3.txt']
+    mapfiles = ['empty.txt', 'map1.txt', 'map2.txt', 'map3.txt'] # 11/24 수정. 파일 추가
 
 class FileSize(enum.Enum):
     title = (1155, 155)
     start_txt = (498, 67)
     geo = (172, 110)
     background = (width, height)
-    spike = [(60, 60),(2,2),(3,3)]               # 추가
-    brick = [(60, 60),(60,60),(60,60)]
+    spike = [(60, 60), (60, 60), (60, 60)] # 11/24 수정. 모든 가시 사이즈를 (60, 60)으로 고정
+    brick = [(60, 60), (60, 60), (60, 60)] # 11/24 수정. 모든 블럭 사이즈를 (60, 60)으로 고정
     
 
 class Hitbox(enum.Enum):
