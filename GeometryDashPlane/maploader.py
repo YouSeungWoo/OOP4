@@ -18,16 +18,11 @@ class MapLoader():
         self.next_width = (width + 1) * (scr_size[0]//20)
         for i in ret:
             for j in i:
-                print("DATA")
-                print((j.x, j.y))
-                j.x=scr_size[0]+self.map_width+j.x*(scr_size[0]//21) # 11/24 수정. width 분할을 21개로 해야 한다.
-                j.y=j.y*(scr_size[1]//10)
-                j.rect.topleft = (j.x, j.y)
+                j.rect.topleft = (scr_size[0]+self.map_width+j.x*(scr_size[0]//21), j.y*(scr_size[1]//10)) # optimize
         return ret
 
     def check_scroll(self,speed):
         self.scroll += speed
-        print("SCR : " + str(self.scroll))
         if self.scroll >= self.map_width:
             self.scroll = 0
             return True

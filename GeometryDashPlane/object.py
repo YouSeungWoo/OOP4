@@ -1,17 +1,30 @@
 # 게임에 사용되는 객체를 관리하는 파일
 
-import os, sys, pygame, random
+import os, sys, pygame, random, copy
 from manage import *
 from pygame.locals import K_SPACE, Rect
 import numpy as np
 import math
 from collision import *
 
+class ImageCache: # image caching class
+    def __init__(self):
+        self.d = dict() # cache
+    def load_image(self, file, szx, szy, arg): #caching method
+        if (file, szx, szy, arg) in self.d:
+            ret = self.d[(file, szx, szy, arg)]
+            return (ret[0], ret[1].copy())
+        img = load_image(file, szx, szy, arg)
+        self.d[(file, szx, szy, arg)] = img
+        return (img[0], img[1].copy())
+
+g_cache = ImageCache() #cache object
+
 class Geo(pygame.sprite.Sprite):
     def __init__(self, size_x = -1, size_y = -1, screen = None):
         pygame.sprite.Sprite.__init__(self)
         self.screen = screen
-        self.geo_image, self.rect  = load_image(FileName.geo.value, size_x, size_y, None) # 이미지 로드
+        self.geo_image, self.rect  = g_cache.load_image(FileName.geo.value, size_x, size_y, None) # 이미지 로드
         self.image= self.geo_image
         self.rect.center = (width * 0.3, height * 0.7) #처음 좌표 이동
         self.x,self.y = self.rect.center
@@ -76,7 +89,7 @@ class Geo(pygame.sprite.Sprite):
 class Spike(pygame.sprite.Sprite):
     def __init__(self, size_x=-1, size_y=-1, type=0, rotate=0, x_coord=-1, y_coord=-1, screen = None, gamespeed = x_speed):
         pygame.sprite.Sprite.__init__(self, self.containers)
-        self.spike_image, self.rect = load_image(FileName.spike.value[type], size_x, size_y, None) # 이미지 로드
+        self.spike_image, self.rect = g_cache.load_image(FileName.spike.value[type], size_x, size_y, None) # 이미지 로드
         self.images = [self.spike_image, pygame.transform.rotate(self.spike_image, rotate)]
         self.image = self.images[1]
         self.x, self.y = (x_coord, y_coord)
@@ -93,7 +106,7 @@ class Spike(pygame.sprite.Sprite):
 class Brick(pygame.sprite.Sprite):
     def __init__(self, size_x=-1, size_y=-1, type=0, rotate=0, x_coord=-1, y_coord=-1, screen = None, gamespeed = x_speed):
         pygame.sprite.Sprite.__init__(self, self.containers)
-        self.brick_image, self.rect = load_image(FileName.brick.value[type], size_x, size_y, None)
+        self.brick_image, self.rect = g_cache.load_image(FileName.brick.value[type], size_x, size_y, None)
         self.images = [self.brick_image, pygame.transform.rotate(self.brick_image, rotate)]        
         self.image = self.images[1]
         self.x, self.y = (x_coord, y_coord)
