@@ -117,18 +117,24 @@ class Game():
                         sys.exit()
                     elif event.type == pygame.KEYDOWN:
                         game_start = True 
-            # intro에 필요한 이미지 구성
-            self.start_image, self.start_image_rect = load_image(FileName.background.value, FileSize.background.value[0], FileSize.background.value[1], -1)# sysfont.render("Press any key to Start...", True, (255,255,255))   
-            self.screen.blit(self.start_image, (0, 0))
-            self.intro_image, self.intro_image_rect = load_image(FileName.title.value, FileSize.title.value[0], FileSize.title.value[1], -1)
-            self.screen.blit(self.intro_image, (width * 0.05, height * 0.1))
-            self.start_txt_image, self.start_txt_rect = load_image(FileName.start_txt.value, FileSize.start_txt.value[0], FileSize.start_txt.value[1], -1)
-            self.screen.blit(self.start_txt_image, (width * 0.3, height * 0.7))
+            
+            self.print_intro() # 11/25추가. 이미지 출력부 분리
+
             pygame.display.update()
                         # 아무 키나 누르면 스테이지 생성하고 geo 출력해서 게임 시작
             self.clock.tick(FPS)
             
         return True
+
+    def print_intro(self):
+        self.start_image, self.start_image_rect = load_image(FileName.background.value, FileSize.background.value[0], FileSize.background.value[1], -1) # sysfont.render("Press any key to Start...", True, (255,255,255))   
+        self.screen.blit(self.start_image, (0, 0))
+        self.intro_image, self.intro_image_rect = load_image(FileName.title.value, FileSize.title.value[0], FileSize.title.value[1], -1)
+        self.screen.blit(self.intro_image, (width * 0.05, height * 0.1))
+        self.start_txt_image, self.start_txt_rect = load_image(FileName.start_txt.value, FileSize.start_txt.value[0], FileSize.start_txt.value[1], -1)
+        self.screen.blit(self.start_txt_image, (width * 0.3, height * 0.7))
+        self.team_image, self.team_image_rect = load_image(FileName.team_name.value, FileSize.team_name.value[0], FileSize.team_name.value[1], -1)
+        self.screen.blit(self.team_image, (width * 0.88, height * 0.85))
 
     def start(self):
         is_start = self.intro(True)

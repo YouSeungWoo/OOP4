@@ -5,7 +5,6 @@ from manage import *
 from pygame.locals import K_SPACE, Rect
 import numpy as np
 import math
-from collision import *
 
 class ImageCache: # image caching class
     def __init__(self):
@@ -34,7 +33,7 @@ class Geo(pygame.sprite.Sprite):
     def trans(self):
         (self.x, self.y) = self.rect.center
         self.image = pygame.transform.rotate(self.geo_image, math.degrees(self.rad))
-        self.outline()
+        # self.outline()
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
         
@@ -56,13 +55,13 @@ class Geo(pygame.sprite.Sprite):
         
         
         if self.rect.bottom >= height: #밑으로 안 넘어가기
-            if not self.isUP or self.velocity > 0 :
+            if self.velocity > 0 :
                 self.velocity = 0
                 self.trans()
                 bottom = self.rect.bottom
                 self.rect.move_ip(0, height - bottom)
         elif self.rect.top <= 0 : #위로 안 넘어가기
-            if self.isUP or self.velocity < 0:
+            if self.velocity < 0:
                 self.velocity=0
                 self.trans()
                 top = self.rect.top
@@ -70,16 +69,6 @@ class Geo(pygame.sprite.Sprite):
         self.trans()
         self.rect.move_ip(0 , self.velocity) # geo_image_rect를 옮겨 줌
         return self.rect.topleft # geo_image_rect의 왼쪽 위의 좌표를 반환
-    
-    def outline(self):
-        self.v = Vector
-        self.poly = Hitbox.geo.value
-        self.poly.angle = -self.rad
-        
-        self.poly.pos.x = self.x
-        self.poly.pos.y = self.y
-        
-        pygame.draw.polygon(self.screen, BLACK, self.poly.points, 3)
     
     def colli_Check(self, group):
         if not len(pygame.sprite.spritecollide(self,group,False,pygame.sprite.collide_mask)) == 0:

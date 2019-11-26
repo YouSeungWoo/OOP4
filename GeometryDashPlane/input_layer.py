@@ -1,6 +1,6 @@
 import pygame, sys
 
-from network import Network     # network Å¬·¡½º
+from network import Network     # network Ã…Â¬Â·Â¡Â½Âº
 
 class input_layer:
     usermode = True # usermode
