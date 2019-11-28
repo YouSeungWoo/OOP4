@@ -15,11 +15,21 @@ class Game():
         pygame.init()
         pygame.key.set_repeat(5,5) # 누르고 있을 것을 대비
         
+        self.generation = Generation()
+        self.population = self.generation.population
+        self.survivors = 0
+        
         self.high_score = 0
         self.n_gen = 0
         self.current_score = 0
         self.gamespeed = x_speed
         self.bgcolor = WHITE
+        
+        self.geo = []
+        self.genomes = []
+        self.layers = []
+        self.genomes, self.layers = self.generation.set_initial_genomes()
+        self.layers.append(input_layer(True))
     
         self.screen = pygame.display.set_mode(scr_size)
         self.clock = pygame.time.Clock()
@@ -28,9 +38,12 @@ class Game():
         self.maploader = MapLoader(self.screen)
 
         # 유전정보 생성하기
-        self.geo = [Geo(FileSize.geo.value[0], FileSize.geo.value[1], self.screen)] # geo 생성
-        self.layers = [input_layer(False)]
-
+        for i in range(self.population):
+            self.geo.append(Geo(FileSize.geo.value[0], FileSize.geo.value[1], self.screen)) # geo 생성
+        self.geo.append(Geo(FileSize.geo.value[0], FileSize.geo.value[1], self.screen))
+        
+        self.survivors = len(self.geo)
+        
         assert len(self.geo) == len(self.layers)
 
     def playgame(self):
@@ -39,7 +52,7 @@ class Game():
         game_ing = False # game palying flag
         
         # setup images and fonts
-        sysfont=pygame.font.SysFont(None, 25) # 출력할 문장의 폰트
+        sysfont = pygame.font.SysFont(None, 25) # 출력할 문장의 폰트
         gameover_image = sysfont.render("Game Over...", True, BLACK)
         score_image = sysfont.render("High score : {}     score : {}".format(int(self.high_score), int(self.current_score)), True, WHITE) # color changed
 
@@ -59,7 +72,7 @@ class Game():
         while not game_over:
             for ly in self.layers: # input check
                 ly.get_input() #  모든 레이어에 대해 입력 확인
-
+                            
             if game_ing: # playing loop
                 self.screen.fill(self.bgcolor) #draw background
 
@@ -70,28 +83,34 @@ class Game():
                     for o in objs[1]:
                         if o.is_collidable():
                             self.spikes.add(o)
-                
+           #     print("1")
                 self.current_score += 0.15
                 score_image = sysfont.render("High score : {}     score : {}".format(int(self.high_score), int(self.current_score)), True, WHITE)
                 self.bricks.update()
                 self.spikes.update()
                 self.spikes.draw(self.screen)
                 self.bricks.draw(self.screen)
-                
+           #     print("2")
                 for idx, geo in enumerate(self.geo): # 모든 geo에 대해서 입력 처리 및 그리기 작업 수행
-                    self.screen.blit(geo.image, geo.move(self.layers[idx], self.gamespeed)) # self.geo.move(key, gamespeed)를 이용해서 geo를 이동시키고 그것을 출력
-                    pygame.draw.rect(self.screen, WHITE, (geo.rect.left, geo.rect.top, geo.rect.width, geo.rect.height), 10)
-                if self.geo[0].colli_Check(self.spikes):
-                    game_ing = False
-                    game_over = True
-                    self.geo[0].rect.center = (width * 0.3, height * 0.7)
-                    self.geo[0].velocity = 0
+                    if not geo.isDead:
+                        self.screen.blit(geo.image, geo.move(self.layers[idx], self.gamespeed)) # self.geo.move(key, gamespeed)를 이용해서 geo를 이동시키고 그것을 출력
+         #           pygame.draw.rect(self.screen, WHITE, (geo.rect.left, geo.rect.top, geo.rect.width, geo.rect.height), 10)
+          #      print("3")
+                for geo in self.geo:
+                    if not geo.isDead:
+                        if geo.colli_Check(self.spikes):
+                            geo.isDead = True
+                            self.survivors -= 1
                 self.screen.blit(score_image, (width * 0.7, 0)) # 점수판 출력
                 pygame.display.update()
+           #     print("4")
                 self.clock.tick(FPS)
-                
+                print(self.survivors)
+                if self.survivors == 0:
+                    game_over = True
+                    break
             else: # game start check
-                if (self.layers[0].get_key() and self.layers[0].usermode == True) or self.layers[0].usermode == False:
+                if (self.layers[-1].get_key() and self.layers[-1].usermode == True) or self.layers[-1].usermode == False:
                     game_ing = True # game start
                     self.bgcolor = BLACK # background set
         # game over : out of game loop
@@ -105,6 +124,13 @@ class Game():
         pygame.display.update()
         self.clock.tick(1)
         self.n_gen += 1
+        
+        self.geo = []
+        
+        for i in range(self.population):
+            self.geo.append(Geo(FileSize.geo.value[0], FileSize.geo.value[1], self.screen)) # geo 생성
+        self.geo.append(Geo(FileSize.geo.value[0], FileSize.geo.value[1], self.screen))
+        self.survivors = len(self.geo)
 
     def intro(self, user_mode):
         game_start = False
