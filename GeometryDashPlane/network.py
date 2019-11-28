@@ -4,7 +4,7 @@ import random
 class Network:
     def __init__(self):
         # 사이즈 설정
-        self.input_size = 2
+        self.input_size = 8
         self.hidden_sizes = [8, 4]
         self.output_size = 1
         self.output = 0

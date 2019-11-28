@@ -56,18 +56,18 @@ class Geo(pygame.sprite.Sprite):
         else:
             self.velocity += gravity * (1 - abs(self.rad))
             
-        if self.rect.bottom >= height: #밑으로 안 넘어가기
+        if self.rect.bottom >= height+32: #밑으로 안 넘어가기
             if self.velocity > 0 :
                 self.velocity = 0
                 self.trans()
                 bottom = self.rect.bottom
-                self.rect.move_ip(0, height - bottom)
-        elif self.rect.top <= 0 : #위로 안 넘어가기
+                self.rect.move_ip(0, height - bottom +32)
+        elif self.rect.top <= -20 : #위로 안 넘어가기
             if self.velocity < 0:
                 self.velocity=0
                 self.trans()
                 top = self.rect.top
-                self.rect.move_ip(0, -top)
+                self.rect.move_ip(0, -top -20)
         self.trans()
         self.rect.move_ip(0 , self.velocity) # geo_image_rect를 옮겨 줌
         return self.rect.topleft # geo_image_rect의 왼쪽 위의 좌표를 반환

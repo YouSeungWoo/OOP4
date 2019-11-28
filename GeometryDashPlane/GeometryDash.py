@@ -23,7 +23,7 @@ class Game():
         self.n_gen = 0
         self.current_score = 0
         self.gamespeed = x_speed
-        self.bgcolor = WHITE
+        self.bgcolor = BLACK
         
         self.geo = []
         self.genomes = []
@@ -31,7 +31,7 @@ class Game():
         self.genomes, self.layers = self.generation.set_initial_genomes()
         self.layers.append(input_layer(True))
     
-        self.screen = pygame.display.set_mode(scr_size)
+        self.screen = pygame.display.set_mode(scr_size, pygame.HWSURFACE | pygame.DOUBLEBUF)
         self.clock = pygame.time.Clock()
         pygame.display.set_caption('Geometry Dash: Plain')
 
@@ -49,7 +49,7 @@ class Game():
     def playgame(self):
         # setup initial condition
         game_over = False # gameover flag
-        game_ing = False # game palying flag
+        game_ing = True # game palying flag
         
         # setup images and fonts
         sysfont = pygame.font.SysFont(None, 25) # 출력할 문장의 폰트
@@ -69,17 +69,23 @@ class Game():
         self.screen.blit(gen_image, (width * 0.8, 25))
         self.screen.blit(self.geo[-1].image, self.geo[-1].rect.topleft)
         pygame.display.update()
- #self.geo[idx].rect.centery
+        self.list = []
+        
         # game loop
         while not game_over:
+            self.bgcolor = BLACK
+            for i in range(6-len(self.list)):
+                self.list.append(random.uniform(-1, 1))
             for idx, ly in enumerate(self.layers): # input check
                 self.inputs = [self.geo[idx].rect.centery/height, self.geo[idx].rad*4 / np.pi]
+                for ii in range(6):
+                    self.inputs.append(self.list[ii])
                 ly.ai.forward(self.inputs)
                 ly.get_input() #  모든 레이어에 대해 입력 확인
-                            
+            print("1")
             if game_ing: # playing loop
                 self.screen.fill(self.bgcolor) #draw background
-
+                self.list = []
                 if self.maploader.check_scroll(self.gamespeed):
                     objs = self.maploader.get_obj()
                     for o in objs[0]:
@@ -87,6 +93,10 @@ class Game():
                     for o in objs[1]:
                         if o.is_collidable():
                             self.spikes.add(o)
+                templist = sorted(self.spikes.sprites(), key = lambda x: x.rect.centerx)
+                templist1 = [x for x in templist if x.rect.centerx > width*0.3]
+                for iii in range(len(templist1)):
+                    self.list.append(templist1[iii].rect.centery/height)
                 self.current_score += 0.15
                 score_image = sysfont.render("High score : {}   score : {}".format(int(self.high_score), int(self.current_score)), True, WHITE)
                 gen_image = sysfont.render("Gen : {}   Survivors :  {}".format(self.n_gen, self.survivors), True, WHITE)
@@ -97,7 +107,7 @@ class Game():
                 for idx, geo in enumerate(self.geo): # 모든 geo에 대해서 입력 처리 및 그리기 작업 수행
                     if not geo.isDead:
                         self.screen.blit(geo.image, geo.move(self.layers[idx], self.gamespeed)) # self.geo.move(key, gamespeed)를 이용해서 geo를 이동시키고 그것을 출력
-         #           pygame.draw.rect(self.screen, WHITE, (geo.rect.left, geo.rect.top, geo.rect.width, geo.rect.height), 10)
+              #          pygame.draw.rect(self.screen, WHITE, (geo.rect.left, geo.rect.top, geo.rect.width, geo.rect.height), 10)
                 for geo in self.geo:
                     if not geo.isDead:
                         if geo.colli_Check(self.spikes):
@@ -111,10 +121,10 @@ class Game():
                 if self.survivors == 0:
                     game_over = True
                     break
-            else: # game start check
-                if (self.layers[-1].get_key() and self.layers[-1].usermode == True) or self.layers[-1].usermode == False:
-                    game_ing = True # game start
-                    self.bgcolor = BLACK # background set
+       #     else: # game start check
+       #         if (self.layers[-1].get_key() and self.layers[-1].usermode == True) or self.layers[-1].usermode == False:
+       #             game_ing = True # game start
+       #             self.bgcolor = BLACK # background set
         # game over : out of game loop
         if self.current_score > self.high_score:
             self.high_score = self.current_score

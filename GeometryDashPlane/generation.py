@@ -7,7 +7,7 @@ class Generation():
         self.genomes = []
         self.input_layers = []
         self.population = 10
-        self.keep_best = 5
+        self.keep_best = 2
         self.lucky_few = 10
         self.chance_of_mutation = 0.1
 
@@ -40,7 +40,7 @@ class Generation():
         self.genomes = copy.deepcopy(self.best_genomes[:])
 
     def mutations(self):
-        while len(self.genomes) < self.keep_best*2 :
+        while len(self.genomes) < self.keep_best * 4 :
             genome1 = random.choice(self.best_genomes)
             genome2 = random.choice(self.best_genomes)
             self.genomes.append(self.mutate(self.cross_over(genome1, genome2)))
