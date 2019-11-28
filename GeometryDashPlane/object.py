@@ -29,6 +29,8 @@ class Geo(pygame.sprite.Sprite):
         self.x,self.y = self.rect.center
         self.velocity = 0
         self.isUp = False
+        self.score = 0
+        self.fitness = 0
     
     def trans(self):
         (self.x, self.y) = self.rect.center
@@ -52,8 +54,6 @@ class Geo(pygame.sprite.Sprite):
         else:
             self.velocity += gravity * (1 - abs(self.rad))
             
-        
-        
         if self.rect.bottom >= height: #밑으로 안 넘어가기
             if self.velocity > 0 :
                 self.velocity = 0
@@ -71,8 +71,8 @@ class Geo(pygame.sprite.Sprite):
         return self.rect.topleft # geo_image_rect의 왼쪽 위의 좌표를 반환
     
     def colli_Check(self, group):
-        if not len(pygame.sprite.spritecollide(self,group,False,pygame.sprite.collide_mask)) == 0:
-            return True
+      #  if not len(pygame.sprite.spritecollide(self,group,False,pygame.sprite.collide_mask)) == 0:
+    #        return True
         return False
 
 class Spike(pygame.sprite.Sprite):
@@ -83,6 +83,7 @@ class Spike(pygame.sprite.Sprite):
         self.image = self.images[1]
         self.x, self.y = (x_coord, y_coord)
         self.velocity = -gamespeed
+        
     def draw(self):
         self.screen.blit(self.spike_image,self.rect)
         
@@ -90,7 +91,11 @@ class Spike(pygame.sprite.Sprite):
         self.rect.move_ip(self.velocity,0)
         if self.rect.right < 0:
             self.kill()
-
+    
+    def is_collidable(self):
+        if self.rect.left < (width * 0.3 + 86):
+            return True
+        return False
         
 class Brick(pygame.sprite.Sprite):
     def __init__(self, size_x=-1, size_y=-1, type=0, rotate=0, x_coord=-1, y_coord=-1, screen = None, gamespeed = x_speed):

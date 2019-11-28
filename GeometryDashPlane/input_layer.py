@@ -1,5 +1,5 @@
 import pygame, sys
-
+import numpy as np
 from network import Network     # network Å¬·¡½º
 
 class input_layer:
@@ -8,7 +8,7 @@ class input_layer:
     keypress = False # keypressed value
     def __init__(self, usmode = True):
         self.usermode = usmode
-        self.ai = None
+        self.ai = Network()
     
     def set_ai(self, ai):
         self.ai = ai
@@ -29,8 +29,9 @@ class input_layer:
             return self.keypress
         else:
             assert self.ai != None
-            self.keypress = Bool(self.ai.get_decision())
+            self.keypress = self.ai.get_decision()
             return self.keypress
     
     def get_key(self):
         return self.keypress
+    

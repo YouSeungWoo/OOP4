@@ -29,7 +29,7 @@ class Game():
 
         # 유전정보 생성하기
         self.geo = [Geo(FileSize.geo.value[0], FileSize.geo.value[1], self.screen)] # geo 생성
-        self.layers = [input_layer()]
+        self.layers = [input_layer(False)]
 
         assert len(self.geo) == len(self.layers)
 
@@ -68,20 +68,24 @@ class Game():
                     for o in objs[0]:
                         self.bricks.add(o)
                     for o in objs[1]:
-                        self.spikes.add(o)
+                        if o.is_collidable():
+                            self.spikes.add(o)
                 
                 self.current_score += 0.15
                 score_image = sysfont.render("High score : {}     score : {}".format(int(self.high_score), int(self.current_score)), True, WHITE)
-                for idx, geo in enumerate(self.geo): # 모든 geo에 대해서 입력 처리 및 그리기 작업 수행
-                    self.screen.blit(geo.image, geo.move(self.layers[idx], self.gamespeed)) # self.geo.move(key, gamespeed)를 이용해서 geo를 이동시키고 그것을 출력
                 self.bricks.update()
                 self.spikes.update()
                 self.spikes.draw(self.screen)
                 self.bricks.draw(self.screen)
-
+                
+                for idx, geo in enumerate(self.geo): # 모든 geo에 대해서 입력 처리 및 그리기 작업 수행
+                    self.screen.blit(geo.image, geo.move(self.layers[idx], self.gamespeed)) # self.geo.move(key, gamespeed)를 이용해서 geo를 이동시키고 그것을 출력
+                    pygame.draw.rect(self.screen, WHITE, (geo.rect.left, geo.rect.top, geo.rect.width, geo.rect.height), 10)
                 if self.geo[0].colli_Check(self.spikes):
                     game_ing = False
                     game_over = True
+                    self.geo[0].rect.center = (width * 0.3, height * 0.7)
+                    self.geo[0].velocity = 0
                 self.screen.blit(score_image, (width * 0.7, 0)) # 점수판 출력
                 pygame.display.update()
                 self.clock.tick(FPS)
@@ -100,6 +104,7 @@ class Game():
         self.screen.blit(gameover_image, (width/2-gameover_image.get_rect().width/2, height/2-gameover_image.get_rect().height/2))
         pygame.display.update()
         self.clock.tick(1)
+        self.n_gen += 1
 
     def intro(self, user_mode):
         game_start = False

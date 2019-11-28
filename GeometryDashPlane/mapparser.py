@@ -18,7 +18,7 @@ class MapParser():
         self.spikes = []
         self.map_width = 0
         self.map_width = int(list[0])
-        print(list)
+        #print(list)
         list = list[3:]
         for s in list:
             line = s.split(' ')

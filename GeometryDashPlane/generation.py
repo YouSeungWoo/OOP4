@@ -6,7 +6,7 @@ class Generation():
     def __init__(self):
         self.genomes = []
         self.input_layers = []
-        self.population = 500
+        self.population = 50
         self.keep_best = 10
         self.lucky_few = 10
         self.chance_of_mutation = 0.1

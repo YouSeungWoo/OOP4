@@ -21,7 +21,7 @@ class FileName(enum.Enum):
     brick = ['Brick.png', 'Tile.png', 'empty_block.png', 'BeamBlock.png', 'GridBlock.png', 'CrossBlock.png', 'PatternBlock.png', ] # 11/24 수정. 파일 추가
     background = 'background_main.png'
     map_sprites = 'map'
-    mapfiles = ['map1.txt', 'map2.txt', 'map3.txt', 'A.txt', 'I.txt', 'map4.txt', 'map5.txt'] # 11/24 수정. 파일 추가
+    mapfiles = ['map1.txt', 'map2.txt', 'map3.txt', 'A.txt', 'I.txt', 'map4.txt', 'map5.txt', 'hmap1.txt'] # 11/24 수정. 파일 추가
     sawblade = ['SpikedBulbSawblade.png']
     team_name = 'team_name.png'
 
