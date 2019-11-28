@@ -29,6 +29,7 @@ class Geo(pygame.sprite.Sprite):
         self.x,self.y = self.rect.center
         self.velocity = 0
         self.isUp = False
+        self.isDead = False
         self.score = 0
         self.fitness = 0
     
@@ -71,8 +72,8 @@ class Geo(pygame.sprite.Sprite):
         return self.rect.topleft # geo_image_rect의 왼쪽 위의 좌표를 반환
     
     def colli_Check(self, group):
-      #  if not len(pygame.sprite.spritecollide(self,group,False,pygame.sprite.collide_mask)) == 0:
-    #        return True
+        if not len(pygame.sprite.spritecollide(self,group,False,pygame.sprite.collide_mask)) == 0:
+            return True
         return False
 
 class Spike(pygame.sprite.Sprite):
