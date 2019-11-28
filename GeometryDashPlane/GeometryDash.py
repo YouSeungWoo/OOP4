@@ -74,15 +74,14 @@ class Game():
         # game loop
         while not game_over:
             self.bgcolor = BLACK
-            for i in range(6-len(self.list)):
-                self.list.append(random.uniform(-1, 1))
+            for i in range(18-len(self.list)):
+                self.list.append(random.uniform(-0.5, 0.5))
             for idx, ly in enumerate(self.layers): # input check
-                self.inputs = [self.geo[idx].rect.centery/height, self.geo[idx].rad*4 / np.pi]
-                for ii in range(6):
+                self.inputs = [(self.geo[idx].rect.centery-height*0.5)/(height), self.geo[idx].rad*4 / np.pi]
+                for ii in range(18):
                     self.inputs.append(self.list[ii])
                 ly.ai.forward(self.inputs)
                 ly.get_input() #  모든 레이어에 대해 입력 확인
-            print("1")
             if game_ing: # playing loop
                 self.screen.fill(self.bgcolor) #draw background
                 self.list = []
@@ -96,7 +95,7 @@ class Game():
                 templist = sorted(self.spikes.sprites(), key = lambda x: x.rect.centerx)
                 templist1 = [x for x in templist if x.rect.centerx > width*0.3]
                 for iii in range(len(templist1)):
-                    self.list.append(templist1[iii].rect.centery/height)
+                    self.list.append((templist1[iii].rect.centery-0.5*height)/(height))
                 self.current_score += 0.15
                 score_image = sysfont.render("High score : {}   score : {}".format(int(self.high_score), int(self.current_score)), True, WHITE)
                 gen_image = sysfont.render("Gen : {}   Survivors :  {}".format(self.n_gen, self.survivors), True, WHITE)
