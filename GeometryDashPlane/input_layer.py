@@ -34,4 +34,3 @@ class input_layer:
     
     def get_key(self):
         return self.keypress
-    
