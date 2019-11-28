@@ -39,13 +39,7 @@ class Network:
 
     def get_decision(self):
         self.fitness += 1
-
-        # decide action
-        inputs = np.array([random.random(), random.random()], dtype=np.float32) # 여기에 input 넣어 주면 될 듯??
-      #  print(inputs)
-        outputs = self.forward(inputs)[0]
-    #    print(outputs)
-        # execute action
+        
         if self.output < 0:
             return False
         else:

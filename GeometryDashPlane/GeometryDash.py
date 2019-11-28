@@ -55,6 +55,7 @@ class Game():
         sysfont = pygame.font.SysFont(None, 25) # 출력할 문장의 폰트
         gameover_image = sysfont.render("Game Over...", True, BLACK)
         score_image = sysfont.render("High score : {}     score : {}".format(int(self.high_score), int(self.current_score)), True, WHITE) # color changed
+        gen_image = sysfont.render("Gen : {}   Survivors :  {}".format(self.n_gen, self.survivors), True, WHITE)
 
         # setup sprites
         self.bricks = pygame.sprite.Group()
@@ -64,13 +65,16 @@ class Game():
       
         # initial image draw
         self.screen.fill(self.bgcolor) # default background color setup
-        self.screen.blit(score_image, (width * 0.7, 0)) # 점수판 출력
-        self.screen.blit(self.geo[0].image, self.geo[0].rect.topleft)
+        self.screen.blit(score_image, (width * 0.8, 0)) # 점수판 출력
+        self.screen.blit(gen_image, (width * 0.8, 25))
+        self.screen.blit(self.geo[-1].image, self.geo[-1].rect.topleft)
         pygame.display.update()
-
+ #self.geo[idx].rect.centery
         # game loop
         while not game_over:
-            for ly in self.layers: # input check
+            for idx, ly in enumerate(self.layers): # input check
+                self.inputs = [self.geo[idx].rect.centery/height, self.geo[idx].rad*4 / np.pi]
+                ly.ai.forward(self.inputs)
                 ly.get_input() #  모든 레이어에 대해 입력 확인
                             
             if game_ing: # playing loop
@@ -83,29 +87,27 @@ class Game():
                     for o in objs[1]:
                         if o.is_collidable():
                             self.spikes.add(o)
-           #     print("1")
                 self.current_score += 0.15
-                score_image = sysfont.render("High score : {}     score : {}".format(int(self.high_score), int(self.current_score)), True, WHITE)
+                score_image = sysfont.render("High score : {}   score : {}".format(int(self.high_score), int(self.current_score)), True, WHITE)
+                gen_image = sysfont.render("Gen : {}   Survivors :  {}".format(self.n_gen, self.survivors), True, WHITE)
                 self.bricks.update()
                 self.spikes.update()
                 self.spikes.draw(self.screen)
                 self.bricks.draw(self.screen)
-           #     print("2")
                 for idx, geo in enumerate(self.geo): # 모든 geo에 대해서 입력 처리 및 그리기 작업 수행
                     if not geo.isDead:
                         self.screen.blit(geo.image, geo.move(self.layers[idx], self.gamespeed)) # self.geo.move(key, gamespeed)를 이용해서 geo를 이동시키고 그것을 출력
          #           pygame.draw.rect(self.screen, WHITE, (geo.rect.left, geo.rect.top, geo.rect.width, geo.rect.height), 10)
-          #      print("3")
                 for geo in self.geo:
                     if not geo.isDead:
                         if geo.colli_Check(self.spikes):
                             geo.isDead = True
                             self.survivors -= 1
-                self.screen.blit(score_image, (width * 0.7, 0)) # 점수판 출력
+                self.screen.blit(score_image, (width * 0.8, 0)) # 점수판 출력
+                self.screen.blit(gen_image, (width * 0.8, 25))
                 pygame.display.update()
-           #     print("4")
                 self.clock.tick(FPS)
-                print(self.survivors)
+             #   print(self.survivors)
                 if self.survivors == 0:
                     game_over = True
                     break
@@ -131,6 +133,12 @@ class Game():
             self.geo.append(Geo(FileSize.geo.value[0], FileSize.geo.value[1], self.screen)) # geo 생성
         self.geo.append(Geo(FileSize.geo.value[0], FileSize.geo.value[1], self.screen))
         self.survivors = len(self.geo)
+        
+        layers = self.generation.set_genomes(self.genomes)
+        for i, l in enumerate(layers):
+            self.layers[i].set_ai(l.ai)
+        self.generation.keep_best_genomes()
+        self.genomes = self.generation.mutations()
 
     def intro(self, user_mode):
         game_start = False

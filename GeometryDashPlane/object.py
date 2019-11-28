@@ -32,6 +32,7 @@ class Geo(pygame.sprite.Sprite):
         self.isDead = False
         self.score = 0
         self.fitness = 0
+        self.rad = 0
     
     def trans(self):
         (self.x, self.y) = self.rect.center

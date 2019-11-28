@@ -6,8 +6,8 @@ class Generation():
     def __init__(self):
         self.genomes = []
         self.input_layers = []
-        self.population = 20
-        self.keep_best = 10
+        self.population = 10
+        self.keep_best = 5
         self.lucky_few = 10
         self.chance_of_mutation = 0.1
 
@@ -50,6 +50,7 @@ class Generation():
             self.genomes.append(self.mutate(genome))
 
         random.shuffle(self.genomes)
+        print(20)
 
         return self.genomes
 
