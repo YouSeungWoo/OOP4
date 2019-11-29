@@ -3,7 +3,7 @@
 import pygame
 from generation import Generation
 from manage import *
-from object import Geo, Spike, Brick
+from object import ImageCache, Geo, Spike, Brick
 import numpy as np
 import random, copy, os, sys
 from input_layer import input_layer
@@ -20,16 +20,17 @@ class Game():
         self.current_score = 0
         self.gamespeed = x_speed
         self.bgcolor = WHITE
-    
-        self.screen = pygame.display.set_mode(scr_size)
+        
+        self.screen = pygame.display.set_mode(scr_size, pygame.HWSURFACE | pygame.DOUBLEBUF)
         self.clock = pygame.time.Clock()
         pygame.display.set_caption('Geometry Dash: Plain')
 
         self.maploader = MapLoader(self.screen)
+        self.g_cache = ImageCache()
 
         # 유전정보 생성하기
         self.geo = [Geo(FileSize.geo.value[0], FileSize.geo.value[1], self.screen)] # geo 생성
-        self.layers = [input_layer()]
+        self.layers = [input_layer(True)]
 
         assert len(self.geo) == len(self.layers)
 
@@ -57,8 +58,13 @@ class Game():
 
         # game loop
         while not game_over:
+            # i = random.randrange(0, 256) # 눈뽕코드
+            # j = random.randrange(0, 256)
+            # k = random.randrange(0, 256)
+            # self.bgcolor = (i, j, k)
+            x, y = self.geo[0].get_xy()
             for ly in self.layers: # input check
-                ly.get_input() #  모든 레이어에 대해 입력 확인
+                ly.get_input(x, y) #  모든 레이어에 대해 입력 확인
 
             if game_ing: # playing loop
                 self.screen.fill(self.bgcolor) #draw background
@@ -68,20 +74,25 @@ class Game():
                     for o in objs[0]:
                         self.bricks.add(o)
                     for o in objs[1]:
-                        self.spikes.add(o)
+                        if o.is_collidable():
+                            self.spikes.add(o)
                 
                 self.current_score += 0.15
                 score_image = sysfont.render("High score : {}     score : {}".format(int(self.high_score), int(self.current_score)), True, WHITE)
-                for idx, geo in enumerate(self.geo): # 모든 geo에 대해서 입력 처리 및 그리기 작업 수행
-                    self.screen.blit(geo.image, geo.move(self.layers[idx], self.gamespeed)) # self.geo.move(key, gamespeed)를 이용해서 geo를 이동시키고 그것을 출력
                 self.bricks.update()
                 self.spikes.update()
+                # self.screen.blit(self.start_image, (0, 0))
                 self.spikes.draw(self.screen)
                 self.bricks.draw(self.screen)
-
+                
+                for idx, geo in enumerate(self.geo): # 모든 geo에 대해서 입력 처리 및 그리기 작업 수행
+                    self.screen.blit(geo.image, geo.move(self.layers[idx], self.gamespeed)) # self.geo.move(key, gamespeed)를 이용해서 geo를 이동시키고 그것을 출력
+                    pygame.draw.rect(self.screen, WHITE, (geo.rect.left, geo.rect.top, geo.rect.width, geo.rect.height), 10)
                 if self.geo[0].colli_Check(self.spikes):
                     game_ing = False
                     game_over = True
+                    self.geo[0].rect.center = (width * 0.3, height * 0.7)
+                    self.geo[0].velocity = 0
                 self.screen.blit(score_image, (width * 0.7, 0)) # 점수판 출력
                 pygame.display.update()
                 self.clock.tick(FPS)
@@ -100,6 +111,7 @@ class Game():
         self.screen.blit(gameover_image, (width/2-gameover_image.get_rect().width/2, height/2-gameover_image.get_rect().height/2))
         pygame.display.update()
         self.clock.tick(1)
+        self.n_gen += 1
 
     def intro(self, user_mode):
         game_start = False
@@ -117,18 +129,27 @@ class Game():
                         sys.exit()
                     elif event.type == pygame.KEYDOWN:
                         game_start = True 
-            # intro에 필요한 이미지 구성
-            self.start_image, self.start_image_rect = load_image(FileName.background.value, FileSize.background.value[0], FileSize.background.value[1], -1)# sysfont.render("Press any key to Start...", True, (255,255,255))   
-            self.screen.blit(self.start_image, (0, 0))
-            self.intro_image, self.intro_image_rect = load_image(FileName.title.value, FileSize.title.value[0], FileSize.title.value[1], -1)
-            self.screen.blit(self.intro_image, (width * 0.05, height * 0.1))
-            self.start_txt_image, self.start_txt_rect = load_image(FileName.start_txt.value, FileSize.start_txt.value[0], FileSize.start_txt.value[1], -1)
-            self.screen.blit(self.start_txt_image, (width * 0.3, height * 0.7))
+            
+            self.print_intro()
+
             pygame.display.update()
                         # 아무 키나 누르면 스테이지 생성하고 geo 출력해서 게임 시작
             self.clock.tick(FPS)
             
         return True
+
+    # course_image 추가
+    def print_intro(self):
+        self.start_image, self.start_image_rect = self.g_cache.load_image(FileName.background.value, FileSize.background.value[0], FileSize.background.value[1], -1) # sysfont.render("Press any key to Start...", True, (255,255,255))   
+        self.screen.blit(self.start_image, (0, 0))
+        self.intro_image, self.intro_image_rect = self.g_cache.load_image(FileName.title.value, FileSize.title.value[0], FileSize.title.value[1], -1)
+        self.screen.blit(self.intro_image, (width * 0.05, height * 0.1))
+        self.start_txt_image, self.start_txt_rect = self.g_cache.load_image(FileName.start_txt.value, FileSize.start_txt.value[0], FileSize.start_txt.value[1], -1)
+        self.screen.blit(self.start_txt_image, (width * 0.3, height * 0.7))
+        self.team_image, self.team_image_rect = self.g_cache.load_image(FileName.team_name.value, FileSize.team_name.value[0], FileSize.team_name.value[1], -1)
+        self.screen.blit(self.team_image, (width * 0.88, height * 0.85))
+        self.course_image, self.course_image_rect = self.g_cache.load_image(FileName.course.value, FileSize.course.value[0], FileSize.course.value[1], -1) # 11/28 추가
+        self.screen.blit(self.course_image, (width * 0.03, height * 0.85))
 
     def start(self):
         is_start = self.intro(True)

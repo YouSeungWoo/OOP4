@@ -5,7 +5,6 @@ from manage import *
 from pygame.locals import K_SPACE, Rect
 import numpy as np
 import math
-from collision import *
 
 class ImageCache: # image caching class
     def __init__(self):
@@ -30,11 +29,13 @@ class Geo(pygame.sprite.Sprite):
         self.x,self.y = self.rect.center
         self.velocity = 0
         self.isUp = False
+        self.score = 0
+        self.fitness = 0
     
     def trans(self):
         (self.x, self.y) = self.rect.center
         self.image = pygame.transform.rotate(self.geo_image, math.degrees(self.rad))
-        self.outline()
+        # self.outline()
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
         
@@ -52,39 +53,31 @@ class Geo(pygame.sprite.Sprite):
             self.velocity -= gravity * (1 - abs(self.rad))
         else:
             self.velocity += gravity * (1 - abs(self.rad))
-            
         
-        
-        if self.rect.bottom >= height: #밑으로 안 넘어가기
-            if not self.isUP or self.velocity > 0 :
-                self.velocity = 0
+        # 자석현상 해결 부분이니 긁어 쓰세요
+        if self.rect.bottom >= height + 32: #밑으로 안 넘어가기
+            if self.velocity > 0 :
+                self.velocity *= 0.6
                 self.trans()
                 bottom = self.rect.bottom
-                self.rect.move_ip(0, height - bottom)
-        elif self.rect.top <= 0 : #위로 안 넘어가기
-            if self.isUP or self.velocity < 0:
-                self.velocity=0
+                self.rect.move_ip(0, height + 32 - bottom)
+        elif self.rect.top <= - 20 : #위로 안 넘어가기
+            if self.velocity < 0:
+                self.velocity *= 0.57
                 self.trans()
                 top = self.rect.top
-                self.rect.move_ip(0, -top)
+                self.rect.move_ip(0, -top - 20)
         self.trans()
         self.rect.move_ip(0 , self.velocity) # geo_image_rect를 옮겨 줌
         return self.rect.topleft # geo_image_rect의 왼쪽 위의 좌표를 반환
     
-    def outline(self):
-        self.v = Vector
-        self.poly = Hitbox.geo.value
-        self.poly.angle = -self.rad
-        
-        self.poly.pos.x = self.x
-        self.poly.pos.y = self.y
-        
-        pygame.draw.polygon(self.screen, BLACK, self.poly.points, 3)
-    
     def colli_Check(self, group):
-        if not len(pygame.sprite.spritecollide(self,group,False,pygame.sprite.collide_mask)) == 0:
-            return True
+      #  if not len(pygame.sprite.spritecollide(self,group,False,pygame.sprite.collide_mask)) == 0:
+    #        return True
         return False
+
+    def get_xy(self):
+        return (self.x, self.y)
 
 class Spike(pygame.sprite.Sprite):
     def __init__(self, size_x=-1, size_y=-1, type=0, rotate=0, x_coord=-1, y_coord=-1, screen = None, gamespeed = x_speed):
@@ -94,6 +87,7 @@ class Spike(pygame.sprite.Sprite):
         self.image = self.images[1]
         self.x, self.y = (x_coord, y_coord)
         self.velocity = -gamespeed
+        
     def draw(self):
         self.screen.blit(self.spike_image,self.rect)
         
@@ -101,7 +95,11 @@ class Spike(pygame.sprite.Sprite):
         self.rect.move_ip(self.velocity,0)
         if self.rect.right < 0:
             self.kill()
-
+    
+    def is_collidable(self):
+        if self.rect.left < (width * 0.3 + 86):
+            return True
+        return False
         
 class Brick(pygame.sprite.Sprite):
     def __init__(self, size_x=-1, size_y=-1, type=0, rotate=0, x_coord=-1, y_coord=-1, screen = None, gamespeed = x_speed):
