@@ -20,7 +20,7 @@ class Game():
         self.survivors = 0
         
         self.high_score = 0
-        self.n_gen = 0
+        self.n_gen = 1
         self.current_score = 0
         self.gamespeed = x_speed
         self.bgcolor = BLACK
@@ -62,6 +62,8 @@ class Game():
         Brick.containers = self.bricks
         self.spikes = pygame.sprite.Group()
         Spike.containers = self.spikes
+        self.obstacles = []
+        self.obs = []
       
         # initial image draw
         self.screen.fill(self.bgcolor) # default background color setup
@@ -69,17 +71,19 @@ class Game():
         self.screen.blit(gen_image, (width * 0.8, 25))
         self.screen.blit(self.geo[-1].image, self.geo[-1].rect.topleft)
         pygame.display.update()
-        self.list = []
+        self.list = [0,0,0]
         
         # game loop
         while not game_over:
+            self.obs = []
+            self.obstacles = []
             self.bgcolor = BLACK
-            for i in range(18-len(self.list)):
-                self.list.append(random.uniform(-0.5, 0.5))
+            for i in range(6-len(self.list)):
+                self.list.append(0)
             for idx, ly in enumerate(self.layers): # input check
-                self.inputs = [(self.geo[idx].rect.centery-height*0.5)/(height), self.geo[idx].rad*4 / np.pi]
-                for ii in range(18):
-                    self.inputs.append(self.list[ii])
+                self.inputs = [(self.geo[idx].rect.centery-height*0.5)/(0.5*height), self.geo[idx].rad*4 / np.pi]
+                for ii in range(6):
+                    self.inputs.append((self.list[ii]-height*0.5)/(0.5*height))
                 ly.ai.forward(self.inputs)
                 ly.get_input() #  모든 레이어에 대해 입력 확인
             if game_ing: # playing loop
@@ -92,10 +96,54 @@ class Game():
                     for o in objs[1]:
                         if o.is_collidable():
                             self.spikes.add(o)
-                templist = sorted(self.spikes.sprites(), key = lambda x: x.rect.centerx)
-                templist1 = [x for x in templist if x.rect.centerx > width*0.3]
-                for iii in range(len(templist1)):
-                    self.list.append((templist1[iii].rect.centery-0.5*height)/(height))
+                 
+                temp1 = self.spikes.sprites()
+                for s in temp1:
+                    if s.rect.centerx > width * 0.3:
+                        self.obs.append(s)
+                
+                if len(self.obs) > 0:
+                    temp = []
+                    print(len(self.obs))
+                    for i in range(6):
+                        temp = []
+                        self.obs.sort(key = lambda x: x.rect.centerx, reverse = False)
+                        temp.append(self.obs[0])
+                        del self.obs[0]
+                #        print(temp[0].rect.centerx)
+                        for i, o in enumerate(self.obs):
+                 #           print(o.rect.centerx)
+                            if(temp[0].rect.centerx == o.rect.centerx):
+                                temp.append(o)
+                                print(i)
+                            else :
+                                break
+                #        print(temp)
+                        for i in range(len(temp)-1):
+                            del self.obs[0]
+                        self.obstacles.append(temp)
+                    
+                    for obs in self.obstacles:
+                   #     print(obs)
+                        obs.sort(key = lambda x: x.rect.centery, reverse=False)
+                        ttemp = [0]
+                        ttemp1 = []
+                        ttemp2 = []
+                        for o in obs:
+                       #     print("x")
+                            ttemp.append(o.rect.centery)
+                        ttemp.append(height)
+                        for i in range(len(ttemp)-1):
+                       #     print("d")
+                            ttemp2.append(ttemp[i]-ttemp[i+1])
+                            ttemp1.append((ttemp[i]+ttemp[i+1])/2)
+                        min_ = min(ttemp2)
+                        for i in range(len(ttemp2)):
+                       #     print("z")
+                            if(min_ == ttemp2[i]):
+                                break
+                        self.list.append(ttemp1[i])
+                print(self.list)
                 self.current_score += 0.15
                 score_image = sysfont.render("High score : {}   score : {}".format(int(self.high_score), int(self.current_score)), True, WHITE)
                 gen_image = sysfont.render("Gen : {}   Survivors :  {}".format(self.n_gen, self.survivors), True, WHITE)
@@ -107,7 +155,8 @@ class Game():
                     if not geo.isDead:
                         self.screen.blit(geo.image, geo.move(self.layers[idx], self.gamespeed)) # self.geo.move(key, gamespeed)를 이용해서 geo를 이동시키고 그것을 출력
               #          pygame.draw.rect(self.screen, WHITE, (geo.rect.left, geo.rect.top, geo.rect.width, geo.rect.height), 10)
-                for geo in self.geo:
+                        self.layers[idx].ai.fitness += 1
+                for idx, geo in enumerate(self.geo):
                     if not geo.isDead:
                         if geo.colli_Check(self.spikes):
                             geo.isDead = True
@@ -143,12 +192,15 @@ class Game():
         self.geo.append(Geo(FileSize.geo.value[0], FileSize.geo.value[1], self.screen))
         self.survivors = len(self.geo)
         
+        
         layers = self.generation.set_genomes(self.genomes)
         for i, l in enumerate(layers):
             self.layers[i].set_ai(l.ai)
         self.generation.keep_best_genomes()
+        for g in self.genomes:
+            g.fitness = 0
         self.genomes = self.generation.mutations()
-
+        
     def intro(self, user_mode):
         game_start = False
         sysfont = pygame.font.SysFont(None,30)
