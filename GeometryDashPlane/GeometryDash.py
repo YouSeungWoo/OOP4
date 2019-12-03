@@ -13,7 +13,9 @@ from maploader import MapLoader
 class Game():
     def __init__(self):
         pygame.init()
-        pygame.key.set_repeat(5,5) # 누르고 있을 것을 대비
+        pygame.key.set_repeat(5,5) # 누르고 있을 것을 대비'
+        pygame.mixer.init()
+        pygame.mixer.music.load(FileName.BGM_title.value)
         
         self.generation = None
         self.population = 0
@@ -41,6 +43,7 @@ class Game():
         # calc inputs for ai
         ret = []
         obstacles = []
+        obs_origin = obs
         if len(obs) > 0:
             for i in range(self.ai_input_len):
                 temp = []
@@ -52,6 +55,9 @@ class Game():
                         temp.append(o)
                     else: break
                 obstacles.append(temp)
+                obs = obs[len(temp) - 1:]
+                if len(obs) <= 0:
+                    break
             for obs in obstacles:
                 obs.sort(key = lambda x: x.rect.centery, reverse=False)
                 ttemp = [0]
@@ -184,7 +190,7 @@ class Game():
         game_start = False
         sysfont = pygame.font.SysFont(None,30)
         mod2 = 1
-
+        pygame.mixer.music.play()
         while not game_start:
             self.screen.fill(BLACK)
             self.print_intro() # 12/03 추가. AI 모드를 위해 위치 조정
@@ -217,7 +223,7 @@ class Game():
             pygame.display.update()
                         # 아무 키나 누르면 스테이지 생성하고 geo 출력해서 게임 시작
             self.clock.tick(FPS)
-            
+        pygame.mixer.music.stop()
         return True
 
     # course_image 추가
@@ -261,6 +267,8 @@ class Game():
         assert len(self.geo) == len(self.layers)
         
         if is_start:
+            pygame.mixer.music.load(FileName.BGM_map.value[random.randrange(0,len(FileName.BGM_map.value))])
+            pygame.mixer.music.play(-1)
             while True:
                 self.playgame()
 # ====================================================

@@ -25,6 +25,8 @@ class FileName(enum.Enum):
     mapfiles = ['map1.txt', 'map2.txt', 'map3.txt', 'A.txt', 'I.txt', 'map4.txt', 'map5.txt', 'map6.txt', 'hmap1.txt'] # 11/24 수정. 파일 추가
     sawblade = ['SpikedBulbSawblade.png']
     team_name = 'team_name.png'
+    BGM_title = '1.mp3'
+    BGM_map = ['2.mp3']
 
 class FileSize(enum.Enum):
     title = (1155, 155)
