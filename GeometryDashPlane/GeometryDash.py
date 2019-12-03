@@ -117,10 +117,17 @@ class Game():
     def intro(self, user_mode):
         game_start = False
         sysfont = pygame.font.SysFont(None,30)
+        mod2 = 1
 
         while not game_start:
             self.screen.fill(BLACK)
             self.print_intro() # 12/03 추가. AI 모드를 위해 위치 조정
+            if mod2 % 2:
+                self.screen.blit(self.CSED232, (width * 0.03, height * 0.85))
+                self.CSED232_rect.topleft = (width * 0.03, height * 0.85)
+            else:
+                 self.screen.blit(self.CSED442, (width * 0.03, height * 0.85))
+                 self.CSED442_rect.topleft = (width * 0.03, height * 0.85)
 
             if pygame.display.get_surface() == None:
                 print("Couldn't load display surface")
@@ -136,6 +143,7 @@ class Game():
                     elif event.type == pygame.MOUSEBUTTONDOWN: # 12/03 추가. AI 모드 마우스 클릭으로 실행
                         print("hi")
                         x, y = event.pos
+                        mod2 += 1
                         if self.team_image_rect.collidepoint(x, y):
                             self.mode = False
                             game_start = True
@@ -157,8 +165,8 @@ class Game():
         self.team_image, self.team_image_rect = self.g_cache.load_image(FileName.team_name.value, FileSize.team_name.value[0], FileSize.team_name.value[1], -1)
         self.screen.blit(self.team_image, (width * 0.88, height * 0.85))
         self.team_image_rect.topleft = (width * 0.88, height * 0.85) # 12/03 추가. AI 모드 마우스 클릭으로 실행을 위해 rect 위치 조정
-        self.course_image, self.course_image_rect = self.g_cache.load_image(FileName.course.value, FileSize.course.value[0], FileSize.course.value[1], -1) # 11/28 추가
-        self.screen.blit(self.course_image, (width * 0.03, height * 0.85))
+        self.CSED232, self.CSED232_rect = load_image(FileName.course.value[0], FileSize.course.value[0], FileSize.course.value[1], -1)
+        self.CSED442, self.CSED442_rect = load_image(FileName.course.value[1], FileSize.course.value[0], FileSize.course.value[1], -1)
 
     def start(self):
         is_start = self.intro(True)
