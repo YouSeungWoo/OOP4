@@ -1,12 +1,11 @@
 # 게임 전체에 이용되는 변수나 기타 게임 관리에 필요한 함수를 담당하는 파일
 
 import enum, os, pygame, sys
-from collision import *
 
 FPS = 120
 scr_size = (width, height) = (1260, 600) # 11/24 수정. 화면 사이즈 조정
-gravity = 0.2
-x_speed = 6 # 11/24 수정. 게임 속도 적당히 맞게 조정
+gravity = 0.3
+x_speed = 8 # 11/24 수정. 게임 속도 적당히 맞게 조정
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -18,36 +17,25 @@ class FileName(enum.Enum):
     title = 'title.png'             # 이미지 파일 이름들
     start_txt = 'key_text.png'
     geo = 'character.png'
-    spike = ['large_white_spike.png', 'half_white_spike.png', 'small_white_spike.png'] # 11/24 수정. 파일 이름 잘못 되어 있어 수정
-    brick = ['Brick.png', 'Tile.png', 'empty_block.png'] # 11/24 수정. 파일 추가
+    course = ['csed442.png', 'csed232.png']
+    spike = ['large_white_spike.png', 'half_white_spike.png', 'small_white_spike.png', '3_spikes_M.png', '3_spikes_L.png', '2_spikes.png', '2_spikes2.png'] # 11/24 수정. 파일 이름 잘못 되어 있어 수정
+    brick = ['Brick.png', 'Tile.png', 'empty_block.png', 'BeamBlock.png', 'GridBlock.png', 'CrossBlock.png', 'PatternBlock.png', ] # 11/24 수정. 파일 추가
     background = 'background_main.png'
     map_sprites = 'map'
-    mapfiles = ['empty.txt', 'map1.txt', 'map2.txt', 'map3.txt'] # 11/24 수정. 파일 추가
+    mapfiles = ['map1.txt', 'map2.txt', 'map3.txt', 'A.txt', 'I.txt', 'map4.txt', 'map5.txt', 'map6.txt', 'hmap1.txt'] # 11/24 수정. 파일 추가
+    sawblade = ['SpikedBulbSawblade.png']
+    team_name = 'team_name.png'
 
 class FileSize(enum.Enum):
     title = (1155, 155)
     start_txt = (498, 67)
     geo = (172, 110)
     background = (width, height)
-    spike = [(60, 60), (60, 60), (60, 60)] # 11/24 수정. 모든 가시 사이즈를 (60, 60)으로 고정
-    brick = [(60, 60), (60, 60), (60, 60)] # 11/24 수정. 모든 블럭 사이즈를 (60, 60)으로 고정
-    
-
-class Hitbox(enum.Enum):
-    v = Vector
-    geo = Concave_Poly(v(0, 0), \
-        [v(-5, -18), v(-6, -17), v(-10, -17), v(-13, -19), v(-13, -11), v(-15, -13), v(-16, -13), v(-20, -17), v(-25, -17), v(-25, -15), v(-23, -13), v(-23, -12), v(-18, -7), v(-18, -5), v(-22, -5), v(-23, -4), v(-24, -4), v(-25, -3), \
-        v(-23, 1), v(-24, 2), v(-24, 5), v(-23, 6), v(-21, 6), v(-21, 8), v(-22, 9), v(-22, 10), v(-20, 12), v(-19, 12), v(-17, 10), v(-16, 11), v(-16, 12), v(-15, 12), v(-13, 10), v(-11, 10), v(-11, 12), v(-9, 12), v(-6, 9), v(-4, 11), \
-        v(8, 11), v(9, 10), v(11, 10), v(12, 11), v(16, 11), v(20, 7), v(20, 4), \
-        v(13, -4), v(8, -4), v(8, -19), v(4, -17), v(2, -17), v(1, -18)])
-
-    """spike = Concave_Poly(v(0, 0), \
-        [
-            ])"""
-
-class BackgroundImage(enum.Enum):
-    stage1 = None;
-
+    spike = [(60, 60), (60, 60), (60, 60), (60, 60), (60, 60), (60, 60), (60, 60)] # 11/24 수정. 모든 가시 사이즈를 (60, 60)으로 고정
+    brick = [(60, 60), (60, 60), (60, 60), (60, 60), (60, 60), (60, 60), (60, 60)] # 11/24 수정. 모든 블럭 사이즈를 (60, 60)으로 고정
+    sawblade = [(60, 60)]
+    course = (120,71)
+    team_name = (120, 71)
 
 def load_image(name, size_x = -1, size_y = -1, colorkey = None):
     fullname = os.path.join(FileName.sprites.value, name)      # sprites와 name을 결합시켜 fullname에 저장

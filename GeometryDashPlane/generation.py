@@ -3,28 +3,28 @@ from network import Network
 from input_layer import input_layer
 
 class Generation():
-    def __init__(self):
+    def __init__(self, population, keep_best, lucky_few, chance_of_mutation):
         self.genomes = []
         self.input_layers = []
-        self.population = 500
-        self.keep_best = 10
-        self.lucky_few = 10
-        self.chance_of_mutation = 0.1
+        self.population = population
+        self.keep_best = keep_best
+        self.lucky_few = lucky_few
+        self.chance_of_mutation = chance_of_mutation
 
-    def set_initial_genomes(self):
-        genomes = []
+    def set_initial_genomes(self, input_size):
+        self.genomes = []
         input_layers = []
         for i in range(self.population):
-            genomes.append(Network())
-        for g in genomes:
+            self.genomes.append(Network(input_size))
+        for g in self.genomes:
             input_layers.append(input_layer(False))
             input_layers[-1].set_ai(g)
-        return genomes, input_layers
+        return self.genomes, input_layers
 
     def set_genomes(self, genomes):
         self.genomes = genomes
         input_layers = []
-        for g in genomes:
+        for g in self.genomes:
             input_layers.append(input_layer(False))
             input_layers[-1].set_ai(g)
         return input_layers
@@ -40,7 +40,7 @@ class Generation():
         self.genomes = copy.deepcopy(self.best_genomes[:])
 
     def mutations(self):
-        while len(self.genomes) < self.keep_best * 4:
+        while len(self.genomes) < self.keep_best * 4 :
             genome1 = random.choice(self.best_genomes)
             genome2 = random.choice(self.best_genomes)
             self.genomes.append(self.mutate(self.cross_over(genome1, genome2)))

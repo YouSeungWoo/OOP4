@@ -1,19 +1,21 @@
 import numpy as np
+import random
 
 class Network:
-    def __init__(self):
+    def __init__(self, input_size):
         # 사이즈 설정
-        self.input_size = 2
-        self.hidden_sizes = [8, 4]
+        self.input_size = input_size
+        self.hidden_sizes = [10, 8]
         self.output_size = 1
-        
+        self.output = 0
         # 총 사이즈 배열
-        self.sizes = self.input_size
-        self.sizes.append(self.hidden_sizes)
+        self.sizes = [self.input_size]
+        for i in self.hidden_sizes:
+            self.sizes.append(i)
         self.sizes.append(self.output_size)
+      #  print(self.sizes)
         
-        self.W = [[np.random.randn(self.sizes[i], self.sizes[i+1])] for i in range(0,len(self.sizes) - 1)]
-
+        self.W = [np.random.randn(self.sizes[i], self.sizes[i+1]) for i in range(0,len(self.sizes) - 1)]
         self.fitness = 0
 
     def forward(self, inputs):
@@ -21,6 +23,7 @@ class Network:
         for i in range(0,len(self.sizes) - 1):
           z = np.dot(a, self.W[i])
           a = np.tanh(z)
+        self.output = a
         return a
 
     def sigmoid(self, z):
@@ -30,6 +33,8 @@ class Network:
         return z * (z > 0)
 
     def get_decision(self):
-        output = self.forward()
-        if output < 0: return False
-        else: return True
+        
+        if self.output > 0:
+            return False
+        else:
+            return True

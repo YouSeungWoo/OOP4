@@ -1,12 +1,10 @@
 # 맵뷰어
 
 import pygame
-from generation import Generation
 from manage import *
 from object import Geo, Spike, Brick
 import numpy as np
 import random, copy, os, sys
-from input_layer import input_layer
 from pygame.locals import QUIT, Rect, KEYDOWN, KEYUP, K_SPACE, K_LEFT, K_RIGHT, K_DOWN, K_UP # 입력받을 키(spacebar), spacebar가 아닌 다른 키(일단 임의로 left key로 정함)
 from mapparser import MapParser
 from mapparser import MapParser
