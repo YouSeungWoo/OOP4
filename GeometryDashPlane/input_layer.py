@@ -1,11 +1,12 @@
 import pygame, sys
 import numpy as np
-from network import Network     # network Å¬·¡½º
+from network import Network
 
 class input_layer:
     usermode = True # usermode
     ai = None
     keypress = False # keypressed value
+
     def __init__(self, usmode = True):
         self.usermode = usmode
         self.ai = None
@@ -19,17 +20,22 @@ class input_layer:
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                     self.keypress = True # set keypress true
                     return True
+
                 elif event.type == pygame.KEYUP:
                     self.keypress = False # set keypress false
                     return False
+
                 elif event.type == pygame.QUIT:
                     print("EXIT GAME")
                     pygame.quit()
                     sys.exit()
+
             return self.keypress
+
         else:
             assert self.ai != None
             self.keypress = self.ai.get_decision()
+
             return self.keypress
     
     def get_key(self):
