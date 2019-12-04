@@ -11,7 +11,7 @@ class MapParser():
         self.spikes = []
         self.map_width = 0
     
-    def parse(self, list, screen):
+    def parse(self, list, screen, speed):
         self.arr = []  # convert strings in list to numbers
         self.objs = []
         self.bricks = []
@@ -30,11 +30,11 @@ class MapParser():
             
         for obj in self.arr:
             if obj[0] == 0 :
-                temp = Brick(FileSize.brick.value[obj[1]][0], FileSize.brick.value[obj[1]][1], obj[1], obj[2], obj[3], obj[4], screen)
+                temp = Brick(FileSize.brick.value[obj[1]][0], FileSize.brick.value[obj[1]][1], obj[1], obj[2], obj[3], obj[4], screen, speed)
                 self.bricks.append(temp)
 
             elif obj[0] == 1 :
-                temp = Spike(FileSize.spike.value[obj[1]][0], FileSize.spike.value[obj[1]][0], obj[1], obj[2], obj[3], obj[4], screen)
+                temp = Spike(FileSize.spike.value[obj[1]][0], FileSize.spike.value[obj[1]][0], obj[1], obj[2], obj[3], obj[4], screen, speed)
                 self.spikes.append(temp)
 
         self.objs.append(self.bricks)

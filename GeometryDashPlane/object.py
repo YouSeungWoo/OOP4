@@ -46,7 +46,7 @@ class Geo(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
         
-    def move(self, layer, gamespeed):
+    def move(self, layer, gamespeed, gravity):
         self.isUP = layer.get_key() # get keypress value
 
         if self.velocity > gamespeed:
@@ -63,14 +63,20 @@ class Geo(pygame.sprite.Sprite):
         
         if self.rect.bottom >= height + 32: # not to exceed the lower boundary
             if self.velocity > 0 :
-                self.velocity *= 0.6
+                if gravity  < 1:
+                    self.velocity *= 0.6
+                else:
+                    self.velocity *= 0.25
                 self.trans()
                 bottom = self.rect.bottom
                 self.rect.move_ip(0, height + 32 - bottom)
 
         elif self.rect.top <= -20 : # not to exceed the upper boundary
             if self.velocity < 0:
-                self.velocity *= 0.57
+                if gravity < 1:
+                    self.velocity *= 0.57
+                else:
+                    self.velocity *= 0.23
                 self.trans()
                 top = self.rect.top
                 self.rect.move_ip(0, -top - 20)
@@ -110,6 +116,9 @@ class Spike(pygame.sprite.Sprite):
         if self.rect.left < (width * 0.3 + 86):
             return True
         return False
+
+    def set_velocity(self, v):
+        self.velocity
         
 class Brick(pygame.sprite.Sprite):
     def __init__(self, size_x = -1, size_y = -1, type = 0, rotate = 0, x_coord = -1, y_coord = -1, screen = None, gamespeed = x_speed):

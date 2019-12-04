@@ -24,8 +24,10 @@ class Game():
         self.high_score = 0
         self.current_score = 0
         self.gamespeed = x_speed
+        self.gravity = gravity
         self.bgcolor = BLACK
         self.mode = True
+        self.party_light = 0
         
         # list
         self.geo = []
@@ -136,7 +138,13 @@ class Game():
         
         # game loop
         while not game_over:
-            self.bgcolor = BLACK
+            if self.party_light:
+                i = random.randrange(0, 256)
+                j = random.randrange(0, 256)
+                k = random.randrange(0, 256)
+                self.bgcolor = (i, j, k)
+            else:
+                self.bgcolor = BLACK
             
             for idx, ly in enumerate(self.layers): # input check
                 if not self.mode:
@@ -153,12 +161,13 @@ class Game():
             if game_ing:
                 self.screen.fill(self.bgcolor) #draw background
                 if self.maploader.check_scroll(self.gamespeed):
-                    objs = self.maploader.get_obj()
+                    objs = self.maploader.get_obj(self.gamespeed)
                     for o in objs[0]:
                         self.bricks.add(o)
                     for o in objs[1]:
                         if o.is_collidable():
                             self.spikes.add(o)
+                            
 
                 if not self.mode:
                     spikes_all = self.spikes.sprites()
@@ -175,7 +184,7 @@ class Game():
                 # move & print all geo
                 for idx, geo in enumerate(self.geo):
                     if not geo.isDead:
-                        self.screen.blit(geo.image, geo.move(self.layers[idx], self.gamespeed)) # move & print
+                        self.screen.blit(geo.image, geo.move(self.layers[idx], self.gamespeed, self.gravity)) # move & print
 
                         if not self.layers[idx].usermode:
                             self.layers[idx].ai.fitness += 1
@@ -225,6 +234,7 @@ class Game():
         game_start = False
         sysfont = pygame.font.SysFont(None,30)
         mod2 = 1
+        easter_egg = 0
         pygame.mixer.music.play()
 
         while not game_start:
@@ -235,8 +245,16 @@ class Game():
                 self.screen.blit(self.CSED232, (width * 0.03, height * 0.85))
                 self.CSED232_rect.topleft = (width * 0.03, height * 0.85)
             else:
-                 self.screen.blit(self.CSED442, (width * 0.03, height * 0.85))
-                 self.CSED442_rect.topleft = (width * 0.03, height * 0.85)
+                self.screen.blit(self.CSED442, (width * 0.03, height * 0.85))
+                self.CSED442_rect.topleft = (width * 0.03, height * 0.85)
+
+            if easter_egg:
+                if easter_egg == 1:
+                    self.screen.blit(self.jupiter_image, (width * 0.96, height * 0.03))
+                elif easter_egg == 2:
+                    self.screen.blit(self.X2_image, (width * 0.94, height * 0.03))
+                elif easter_egg == 3:
+                    self.screen.blit(self.party_image, (width * 0.9, height * 0.03))
 
             if pygame.display.get_surface() == None:
                 print("Couldn't load display surface")
@@ -247,10 +265,51 @@ class Game():
                         pygame.quit()
                         sys.exit()
 
+                    elif event.type == pygame.KEYDOWN and easter_egg == 0:
+                        keys = pygame.key.get_pressed()
+                        if keys[pygame.K_SPACE] and keys[pygame.K_UP] and keys[pygame.K_DOWN]:
+                            print('hello1')
+                           
+                            self.jupiter_image, self.jupiter_image_rect = load_image(FileName.jupiter.value, FileSize.jupiter.value[0], FileSize.jupiter.value[1], -1)
+                            print("made by:\n\
+                                    20180617 유승우\n\
+                                    20180562 현승헌\n\
+                                    20180986 오정택\n\
+                                    20190491 김정진\n\
+                                    Thank you for playing!!!!\n")
+                            print("Fly in Jupiter!")
+                            self.gravity = 1.5
+                            easter_egg = 1
+
+                        elif keys[pygame.K_SPACE] and keys[pygame.K_UP] and keys[pygame.K_RIGHT]:
+                            self.X2_image, self.X2_image_rect = load_image(FileName.X2.value, FileSize.X2.value[0], FileSize.X2.value[1], -1)
+                            print("made by:\n\
+                                    20180617 유승우\n\
+                                    20180562 현승헌\n\
+                                    20180986 오정택\n\
+                                    20190491 김정진\n\
+                                    Thank you for playing!!!!\n")
+                            print("Can you play this?")
+                            self.gravity *= 3
+                            self.gamespeed *= 2
+                            easter_egg = 2
+
                     elif event.type == pygame.MOUSEBUTTONDOWN:
                         if event.button == 1:
                             print("hi")
                             x, y = event.pos
+                            keys = pygame.mouse.get_pressed()
+                            if keys[0] and keys[2] and easter_egg == 0:
+                                self.party_image, self.party_rect = load_image(FileName.party.value, FileSize.party.value[0], FileSize.party.value[1], -1)
+                                print("made by:\n\
+                                    20180617 유승우\n\
+                                    20180562 현승헌\n\
+                                    20180986 오정택\n\
+                                    20190491 김정진\n\
+                                    Thank you for playing!!!!\n")
+                                print("Party Time!!")
+                                self.party_light = 1
+                                easter_egg = 3
 
                             if self.play_image_rect.collidepoint(x, y):
                                 self.mode = True
