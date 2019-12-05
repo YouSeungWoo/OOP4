@@ -1,4 +1,4 @@
-# 맵뷰어
+﻿# 맵뷰어
 
 import pygame
 from manage import *
@@ -129,7 +129,7 @@ class GeoMapViewer:
             print("No FILE!")
             return
 
-        objs, self.maxwidth = self.map_parser.parse(data, self.screen)
+        objs, self.maxwidth = self.map_parser.parse(data, self.screen, 0)
         self.add_objs(objs)
         self.set_coord(self.xscroll)
 
@@ -140,7 +140,7 @@ class GeoMapViewer:
             print("OUT OF RANGE!")
             return
 
-        objs = self.map_parser.parse([str(x),"","",obj_str], self.screen)[0]
+        objs = self.map_parser.parse([str(x),"","",obj_str], self.screen, 0)[0]
         temp = obj_str.split(" ")
         temp[3] = str(x - self.xscroll)
 
@@ -162,7 +162,7 @@ class GeoMapViewer:
     
     def load_obj_undo(self, obj_str):
         x = int(obj_str.split(" ")[3]) # x
-        objs = self.map_parser.parse([str(x), "", "", obj_str], self.screen)[0]
+        objs = self.map_parser.parse([str(x), "", "", obj_str], self.screen, 0)[0]
 
         for i in objs:
             for j in i:

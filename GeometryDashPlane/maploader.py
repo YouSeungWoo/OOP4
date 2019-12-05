@@ -11,9 +11,9 @@ class MapLoader():
         self.parser = MapParser()
         self.screen = screen
 
-    def get_obj(self):
+    def get_obj(self, speed):
         d_obj = {}
-        ret, width = self.parser.parse(self.linker.get_next(), self.screen)
+        ret, width = self.parser.parse(self.linker.get_next(), self.screen, speed)
         self.map_width = self.next_width
         self.next_width = (width + 1) * (scr_size[0] // 20)
 
@@ -23,7 +23,7 @@ class MapLoader():
 
         return ret
 
-    def check_scroll(self,speed):
+    def check_scroll(self, speed):
         self.scroll += speed
 
         if self.scroll >= self.map_width:
