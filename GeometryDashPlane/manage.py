@@ -23,7 +23,7 @@ class FileName(enum.Enum):
     mapfiles = ['map1.txt', 'map2.txt', 'map3.txt', 'A.txt', 'I.txt', 'map4.txt', 'map5.txt', 'map6.txt', 'hmap1.txt'] # 'empty.txt'
     team_name = 'team_name.png'
     BGM_title = 'main.mp3'
-    BGM_map = ['1.mp3', '2.mp3', '3.mp3', '4.mp3', '5.mp3', '6.wav', '7.mp3', '8.mp3']
+    BGM_map = ['1.mp3', '2.mp3', '3.mp3', '4.mp3', '5.mp3', '6.mp3', '7.mp3', '8.mp3']
     jupiter = 'jupiter.png'
     party = 'party.png'
     X2 = 'x2.png'
