@@ -20,7 +20,7 @@ class FileName(enum.Enum):
     brick = ['Brick.png', 'Tile.png', 'empty_block.png', 'BeamBlock.png', 'GridBlock.png', 'CrossBlock.png', 'PatternBlock.png']
     background = 'background_main.png'
     play = 'play_button.png'
-    mapfiles = ['map1.txt', 'map2.txt', 'map3.txt', 'A.txt', 'I.txt', 'map4.txt', 'map5.txt', 'map6.txt', 'hmap1.txt'] # 'empty.txt'
+    mapfiles = ['map1.txt', 'map2.txt', 'map3.txt', 'A.txt', 'I.txt', 'map4.txt', 'map5.txt', 'map6.txt', 'hmap1.txt', 'map20.txt'] # 'empty.txt'
     team_name = 'team_name.png'
     BGM_title = 'main.mp3'
     BGM_map = ['1.mp3', '2.mp3', '3.mp3', '4.mp3', '5.mp3', '6.mp3', '7.mp3', '8.mp3']
@@ -36,7 +36,7 @@ class FileSize(enum.Enum):
     brick = [(60, 60), (60, 60), (60, 60), (60, 60), (60, 60), (60, 60), (60, 60)]
     play = (240, 240)
     course = (120,71)
-    team_name = (120, 71)
+    team_name = (180, 53)
     jupiter = (40, 40)
     X2 = (65, 50)
     party = (120, 65)
