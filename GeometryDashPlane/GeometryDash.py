@@ -144,12 +144,15 @@ class Game():
             else:
                 self.bgcolor = BLACK
             
+            if not self.mode: # event stack pop
+                input_layer(True).get_input()
+            
             for idx, ly in enumerate(self.layers): # input check
                 if not self.mode:
                     inputs = [(self.geo[idx].rect.centery - height * 0.5) / (0.5 * height), \
                                 self.geo[idx].rad * 4 / np.pi]
                     inputs.extend(input_ai)
-
+                    
                     if not ly.usermode:
                         ly.ai.forward(inputs)
 
