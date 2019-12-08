@@ -347,8 +347,8 @@ class Game():
         self.play_image_rect.topleft = (width * 0.41, height * 0.43)
 
         self.team_image, self.team_image_rect = load_image(FileName.team_name.value, FileSize.team_name.value[0], FileSize.team_name.value[1], -1)
-        self.screen.blit(self.team_image, (width * 0.88, height * 0.85))
-        self.team_image_rect.topleft = (width * 0.88, height * 0.85)
+        self.screen.blit(self.team_image, (width * 0.84, height * 0.86))
+        self.team_image_rect.topleft = (width * 0.84, height * 0.86)
 
         self.CSED232, self.CSED232_rect = load_image(FileName.course.value[0], FileSize.course.value[0], FileSize.course.value[1], -1)
         self.CSED442, self.CSED442_rect = load_image(FileName.course.value[1], FileSize.course.value[0], FileSize.course.value[1], -1)
